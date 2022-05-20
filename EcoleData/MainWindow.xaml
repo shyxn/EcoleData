@@ -16,6 +16,7 @@
         <BitmapImage x:Key="StairsIcon" UriSource="/Media/icons/icons8-stairs-up-16.png"/>
         <BitmapImage x:Key="GraphIcon" UriSource="/Media/icons/icons8-stocks-16.png"/>
         <BitmapImage x:Key="FolderIcon" UriSource="/Media/icons/icons8-folder-48.png"/>
+        <BitmapImage x:Key="TempLogo" UriSource="/EcoleData;component/Media/tempLogo.png"/>
     </Window.Resources>
     
     <Grid>
@@ -28,10 +29,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
-            <Image></Image>
+        <!-- TITRE -->
+        <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Image Source="{StaticResource TempLogo}"></Image>
             <TextBlock FontSize="50" FontFamily="Roboto" FontWeight="Bold" VerticalAlignment="Center">ÉcoleDATA</TextBlock>
         </StackPanel>
+        <!-- Choix dossier -->
         <DockPanel Grid.Column="1" Grid.Row="0" Margin="10">
             <Grid HorizontalAlignment="Right" Margin="0,0,5,0">
                 <Grid.RowDefinitions>
@@ -46,7 +49,7 @@
             </Grid>
         </DockPanel>
         
-        <GroupBox Grid.Row="1" Grid.Column="0" Margin="10" FontFamily="Roboto" BorderThickness="2" BorderBrush="Black">
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="10,10,5,10" FontFamily="Roboto" BorderThickness="2" BorderBrush="Black">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{StaticResource FilterIcon}" />
@@ -59,7 +62,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
-                 <!--Ligne (icône + bouton) Réinitialiser les filtres--> 
+                <!--Ligne (icône + bouton) Réinitialiser les filtres-->
                 <DockPanel Grid.Row="0">
                     <Button HorizontalAlignment="Right" Margin="0,0,10,0" Background="Transparent" BorderThickness="0">
                         <StackPanel Orientation="Horizontal">
@@ -68,18 +71,18 @@
                         </StackPanel>
                     </Button>
                 </DockPanel>
-                 <!--Ensemble scrollable de tous les blocs de filtres (École, Étage, Emplacement, Valeurs, Plage de dates--> 
-                <ScrollViewer Grid.Row="1" RenderTransformOrigin="0.5,0.5">
+                <!--Ensemble scrollable de tous les blocs de filtres (École, Étage, Emplacement, Valeurs, Plage de dates-->
+                <ScrollViewer Grid.Row="1" RenderTransformOrigin="0.5,0.5" Margin="5,0,10,0">
                     <ScrollViewer.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
-                            <SkewTransform AngleY="0.26"/>
+                            <SkewTransform AngleY="0"/>
                             <RotateTransform/>
                             <TranslateTransform Y="1.495"/>
                         </TransformGroup>
                     </ScrollViewer.RenderTransform>
                     <StackPanel Orientation="Vertical">
-                         <!--Groupe École--> 
+                        <!--Groupe École-->
                         <GroupBox MinHeight="100" Style="{StaticResource FilterGroupBox}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal">
@@ -87,11 +90,26 @@
                                     <TextBlock FontWeight="UltraBold" FontSize="14" Margin="5,0,0,0">ÉCOLE</TextBlock>
                                 </StackPanel>
                             </GroupBox.Header>
-                            <ComboBox Height="30">
-                                
-                            </ComboBox>
+                            <Grid Margin="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <ComboBox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="25" Margin="10">
+                                    
+                                </ComboBox>
+                                <TextBlock Grid.Column="1" Grid.Row="1" FontSize="14" FontWeight="Bold" VerticalAlignment="Bottom" TextAlignment="Center" Margin="5">École de [nom]</TextBlock>
+                                <TextBlock Grid.Column="1" Grid.Row="2" FontWeight="Bold" TextAlignment="Center">X capteurs</TextBlock>
+                                <Canvas Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" MinHeight="20" Width="100" Background="LightGray" Margin="10"></Canvas>
+                            </Grid>
+                            
                         </GroupBox>
-                         <!--Groupe Étage--> 
+                        <!--Groupe Étage-->
                         <GroupBox MinHeight="80" Style="{StaticResource FilterGroupBox}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal">
@@ -99,9 +117,22 @@
                                     <TextBlock FontWeight="UltraBold" FontSize="14" Margin="5,0,0,0">ÉTAGE</TextBlock>
                                 </StackPanel>
                             </GroupBox.Header>
-                            
+
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                            </Grid>
                         </GroupBox>
-                         <!--Groupe Emplacement--> 
+                        <!--Groupe Emplacement-->
                         <GroupBox MinHeight="80" Style="{StaticResource FilterGroupBox}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal">
@@ -109,9 +140,13 @@
                                     <TextBlock FontWeight="UltraBold" FontSize="14" Margin="5,0,0,0">EMPLACEMENT</TextBlock>
                                 </StackPanel>
                             </GroupBox.Header>
-                            
+                            <StackPanel Orientation="Vertical" Margin="5">
+                                <CheckBox Margin="0,5,0,5"> Capteurs salles </CheckBox>
+                                <CheckBox Margin="0,5,0,0"> Capteurs couloirs</CheckBox>
+                            </StackPanel>
+
                         </GroupBox>
-                         <!--Groupe Valeurs--> 
+                        <!--Groupe Valeurs-->
                         <GroupBox MinHeight="80" Style="{StaticResource FilterGroupBox}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal">
@@ -119,26 +154,44 @@
                                     <TextBlock FontWeight="UltraBold" FontSize="14" Margin="5,0,0,0">VALEURS</TextBlock>
                                 </StackPanel>
                             </GroupBox.Header>
-                            
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <CheckBox Grid.Row="0" Grid.Column="0" Style="{StaticResource CheckBoxStyle}">Température</CheckBox>
+                                <CheckBox Grid.Row="0" Grid.Column="1" Style="{StaticResource CheckBoxStyle}">Point de rosée</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Style="{StaticResource CheckBoxStyle}">Humidité</CheckBox>
+                            </Grid>
                         </GroupBox>
-                         <!--Groupe Plage de dates--> 
-                        <GroupBox MinHeight="80" Style="{StaticResource FilterGroupBox}">
+                        <!--Groupe Plage de dates-->
+                        <GroupBox Style="{StaticResource FilterGroupBox}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="{StaticResource CalendarIcon}" />
                                     <TextBlock FontWeight="UltraBold" FontSize="14" Margin="5,0,0,0">PLAGE DE DATES</TextBlock>
                                 </StackPanel>
                             </GroupBox.Header>
-                            
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <TextBlock VerticalAlignment="Center">du</TextBlock>
+                                <DatePicker VerticalAlignment="Center" Width="100" SelectedDate="01-01-1970" Margin="5"></DatePicker>
+                                <TextBlock VerticalAlignment="Center">au</TextBlock>
+                                <DatePicker VerticalAlignment="Center" Width="100" SelectedDate="01-01-1970" Margin="5"></DatePicker>
+                            </StackPanel>
                         </GroupBox>
                     </StackPanel>
                 </ScrollViewer>
-                 <!--Bouton Appliquer les filtres--> 
+                <!--Bouton Appliquer les filtres-->
                 <Button Style="{StaticResource BtnStyle}" Margin="20,10,20,10" Grid.Row="2" Content="Appliquer les filtres"/>
             </Grid>
-            
         </GroupBox>
-        <GroupBox Grid.Row="1" Grid.Column="1" Margin="10" FontFamily="Roboto" BorderThickness="2" BorderBrush="Black">
+        <!-- Graphique -->
+        <GroupBox Grid.Row="1" Grid.Column="1" Margin="5,10,10,10" FontFamily="Roboto" BorderThickness="2" BorderBrush="Black">
             <GroupBox.Header>
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{StaticResource GraphIcon}" />
@@ -146,6 +199,9 @@
                 </StackPanel>
             </GroupBox.Header>
         </GroupBox>
-        <Button Grid.Row="2" Grid.ColumnSpan="2" Background="LightPink">FOOTER</Button>
+        <!-- Footer -->
+        <StackPanel Grid.ColumnSpan="2" Grid.Row="2" Orientation="Vertical" Margin="10">
+            <TextBlock TextAlignment="Right">[texte de présentation]</TextBlock>
+        </StackPanel>
     </Grid>
 </Window>
