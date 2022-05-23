@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "dgSpecHash": "Hzb3C1dh0+O7ro2GkP+e1PNJRD5nAiB261TVLw0RTd5CHWUI0B3r0VStkkD4VNNa1c1eAmf0ysNtdRnmt14UPw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\pe41qrd\\Desktop\\EcoleData\\EcoleData.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\pe41qrd\\.nuget\\packages\\windowsapicodepack-core\\1.1.2\\windowsapicodepack-core.1.1.2.nupkg.sha512",
+    "C:\\Users\\pe41qrd\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Le package 'WindowsAPICodePack-Core 1.1.2' a été restauré en utilisant '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' au lieu du framework cible du projet 'net5.0-windows7.0'. Ce package n'est peut-être pas totalement compatible avec votre projet.",
+      "libraryId": "WindowsAPICodePack-Core",
+      "targetGraphs": [
+        "net5.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Le package 'WindowsAPICodePack-Shell 1.1.1' a été restauré en utilisant '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' au lieu du framework cible du projet 'net5.0-windows7.0'. Ce package n'est peut-être pas totalement compatible avec votre projet.",
+      "libraryId": "WindowsAPICodePack-Shell",
+      "targetGraphs": [
+        "net5.0-windows7.0"
+      ]
+    }
+  ]
+}
