@@ -24,5 +24,12 @@ namespace EcoleData.Tree
                 name => name, // Clés : Noms des étages
                 name => new Floor(schoolPath + "\\" + name)); // Valeurs : Objets de type Floor
         }
+
+        public int GetNbOfSensors()
+        {
+            int number = 0;
+            Floors.Values.ToList().ForEach(floor => number += floor.Locations.Count);
+            return number;
+        }
     }
 }

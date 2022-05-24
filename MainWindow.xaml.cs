@@ -22,10 +22,18 @@ namespace EcoleData
     public partial class MainWindow : Window
     {
         private MainController _controller;
+        private List<UIElement> _elementsToHideIfNoFolder = new();
         public MainWindow()
         {
             InitializeComponent();
             this._controller = new MainController(this);
+            this._elementsToHideIfNoFolder.AddRange(new List<UIElement>
+            {
+                this.ChooseSchoolHintMessage,
+                this.SchoolTitle,
+                this.SchoolCaptorsNb
+            });
+            HideUIElements();
         }
 
         private void ChooseFolderBtn_Click(object sender, RoutedEventArgs e)
@@ -58,5 +66,17 @@ namespace EcoleData
         {
             this._controller.CheckFolderValidity();
         }
+
+        private void SchoolsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ShowUIElements();
+            string selectedSchoolName = ((ComboBox)sender).SelectedItem.ToString();
+            this.SchoolTitle.Text = "École de " + selectedSchoolName;
+            
+            this._controller.UpdateFilters(selectedSchoolName);
+        }
+
+        public void HideUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Hidden);
+        public void ShowUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Visible);
     }
 }
