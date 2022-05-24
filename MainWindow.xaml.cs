@@ -53,5 +53,10 @@ namespace EcoleData
                 this._controller.CheckFolderValidity();
             }
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this._controller.CheckFolderValidity();
+        }
     }
 }

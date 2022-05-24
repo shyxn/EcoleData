@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EcoleData.Tree
 {
+    /// <summary>
+    /// Représente un étage.
+    /// </summary>
     public class Floor
     {
-        public Dictionary<string,  Location> Locations { get; set; }
-        public Floor()
+        /// <summary>
+        /// Contient tous les emplacements présents dans cet étage. (1 emplacement par fichier CSV).
+        /// </summary>
+        public Dictionary<string, Location> Locations { get; set; }
+        /// <summary>
+        /// (CTOR) Initialise le dictionnaire dans Floors et relaie la création de l'arborescence à un niveau plus bas.
+        /// </summary>
+        /// <param name="floorPath">Le chemin du dossier de l'étage.</param>
+        public Floor(string floorPath)
         {
-        }
-        public Dictionary<string, Location> SetLocations(string floorPath)
-        {
-            List<string> locationNames = Utils.GetFoldersNames(floorPath).ToList();
+            string[] locationNames = Utils.GetFilesNames(floorPath);
             Locations = locationNames.ToDictionary(
-                x => x,
-                x => new Location() { filePath = x });
-            
-            // On s'arrête ici - pas d'autre méthode car on est au niveau le plus bas
-            return Locations;
+                name => name, // Clés : Noms des emplacements (noms en entier des fichiers csv)
+                name => new Location() { CSVFilePath = floorPath + "\\" + name }); // Valeurs : Objets de type Location
         }
     }
 }

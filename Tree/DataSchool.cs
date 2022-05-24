@@ -1,17 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EcoleData.Tree
 {
+    /// <summary>
+    /// Représente l'ensemble des écoles contenant des données pour le projet.
+    /// </summary>
     public class DataSchool
     {
+        /// <summary>
+        /// Contient toutes les écoles existantes
+        /// </summary>
         public Dictionary<string, School> Schools { get; set; }
-        public DataSchool()
+        /// <summary>
+        /// (CTOR) Initialise le dictionnaire dans Schools et relaie la création de l'arborescence à un niveau plus bas.
+        /// </summary>
+        /// <param name="schoolPath">Le chemin du dossier de toutes les écoles.</param>
+        public DataSchool(string foldersPath)
         {
+            string[] schoolNames = Utils.GetFoldersNames(foldersPath);
 
+            Schools = schoolNames.ToDictionary(
+                    name => name, // Clés : Noms des écoles
+                    name => new School(foldersPath + "\\" + name)); // Valeurs : Objets de type School
         }
     }
 }

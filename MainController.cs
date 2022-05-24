@@ -17,17 +17,18 @@ namespace EcoleData
 
         private string _softwareTitle;
         public string SoftwareTitle { get; set; }
+        public DataSchool DataSchool { get; set; }
         public MainController(MainWindow vue)
         {
             this._mainWindow = vue;
             this._mainModel = new MainModel(this);
-            CheckFolderValidity();
+            
         }
 
         public void SetNewFolderPath(string folderPath) => this._mainModel.SetNewFolderPath(folderPath);
 
         /// <summary>
-        /// Permet de vérifier si le dossier existe toujours, si oui, permet de créer l'arboresence de données.
+        /// Permet de vérifier si le dossier existe toujours, si oui, appelle la méthode pour créer l'arborescence de données.
         /// </summary>
         public void CheckFolderValidity()
         {
@@ -46,44 +47,37 @@ namespace EcoleData
         }
         public void LoadTree() // Le chemin du dossier sera toujours valide ici.
         {
-            Debug.WriteLine("Le programme va charger les données...");
-            string foldersPath = this._mainModel.Settings.FolderPath;
+            Debug.WriteLine("[LoadTree()] Chargement de l'arborescence des données...");
 
-            string[] schoolNames = Utils.GetFoldersNames(foldersPath);
-
-            // Création du niveau 0 - Regroupement de toutes les écoles dans un dictionnaire
-            DataSchool dataSchool = new DataSchool()
+            // LIRE TOUS LES CSV( ~ 700k objets instanciés)
+            //DataSchool.Schools.ToList()
+            //    .ForEach(x => x.Value.Floors.ToList()
+            //        .ForEach(x => x.Value.Locations.ToList().ForEach(x => x.Value.ReadCSV())));
+            try
             {
-                // Dictionnaire avec les noms des écoles en Keys, et des objets School en Values.
-                Schools = schoolNames.ToDictionary(
-                    name => name, 
-                    name =>
-                    {
-                        School school = new School();
-                        // Pour chaque étage, on cherche ensuite, à un niveau plus bas, à configurer le dictionnaire Locations...
-                        school.SetFloors(foldersPath + "\\" + name);
-                        return school;
-                    })
-            };
-        }
+                DataSchool = new DataSchool(this._mainModel.Settings.FolderPath);
+                DataSchool.Schools.Values.First().Floors.Values.First().Locations.Values.First().ReadCSV();
+            }
+            catch (Exception)
+            {
+                this._mainWindow.FolderNameDisplayer.Text = "Dossier inexistant ou invalide.";
+                return;
+            }
             
-        
-        
-        public void GetFloors()
-        {
-
+            // Attention, ne vérifie pas la validité des fichiers CSV...
+            if (!CheckTreeValidity())
+            {
+                this._mainWindow.FolderNameDisplayer.Text = "Dossier inexistant ou invalide.";
+            }
+            Debug.WriteLine("[LoadTree()] Arborescence terminée.");
         }
-        public void SetFloors()
-        {
 
-        }
-        public void GetLocations()
+        private bool CheckTreeValidity()
         {
-
-        }
-        public void SetLocations()
-        {
-            
+            return DataSchool.Schools.Count != 0
+                && DataSchool.Schools.Values.ToList()
+                .TrueForAll(school => school.Floors.Count != 0 && school.Floors.Values.ToList()
+                    .TrueForAll(floor => floor.Locations.Count != 0));
         }
     }
 }
