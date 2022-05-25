@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,6 @@ namespace EcoleData
             this._controller = new MainController(this);
             this._elementsToHideIfNoFolder.AddRange(new List<UIElement>
             {
-                this.ChooseSchoolHintMessage,
                 this.SchoolTitle,
                 this.SchoolCaptorsNb
             });
@@ -62,11 +62,6 @@ namespace EcoleData
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            this._controller.CheckFolderValidity();
-        }
-
         private void SchoolsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ShowUIElements();
@@ -78,5 +73,19 @@ namespace EcoleData
 
         public void HideUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Hidden);
         public void ShowUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Visible);
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            Debug.WriteLine("La fenêtre a fini de charger. Recherche des données...");
+            this.loadHintTextBox.Visibility = Visibility.Visible;
+            this._controller.CheckFolderValidity();
+            this.loadHintTextBox.Visibility = Visibility.Hidden;
+            Debug.WriteLine("Fin de la recherche des données.");
+        }
+
+        private void ApplyFiltersBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this._controller.ApplyFilters();
+        }
     }
 }

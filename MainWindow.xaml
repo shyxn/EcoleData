@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:EcoleData"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1280" WindowState="Maximized" MinHeight="600" MinWidth="1000" Loaded="Window_Loaded">
+        Title="MainWindow" Height="800" Width="1280" WindowState="Maximized" MinHeight="600" MinWidth="1000" ContentRendered="Window_ContentRendered">
     <Window.Resources>
         <BitmapImage x:Key="FilterIcon" UriSource="/EcoleData;component/Media/icons/icons8-filter-16.png"/>
         <BitmapImage x:Key="CalendarIcon" UriSource="/Media/icons/icons8-calendar-16.png"/>
@@ -18,6 +19,9 @@
         <BitmapImage x:Key="FolderIcon" UriSource="/Media/icons/icons8-folder-48.png"/>
         <BitmapImage x:Key="TempLogo" UriSource="/EcoleData;component/Media/tempLogo.png"/>
     </Window.Resources>
+    <Window.DataContext>
+        <local:OxyViewModel/>
+    </Window.DataContext>
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -36,6 +40,7 @@
         </StackPanel>
         <!-- Choix dossier -->
         <DockPanel Grid.Column="1" Grid.Row="0" Margin="10">
+            <TextBlock x:Name="loadHintTextBox">Chargement des données en cours...</TextBlock>
             <Grid HorizontalAlignment="Right" Margin="0,0,5,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -162,9 +167,9 @@
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
 
-                                <CheckBox Grid.Row="0" Grid.Column="0" Style="{StaticResource CheckBoxStyle}">Température</CheckBox>
-                                <CheckBox Grid.Row="0" Grid.Column="1" Style="{StaticResource CheckBoxStyle}">Point de rosée</CheckBox>
-                                <CheckBox Grid.Row="1" Grid.Column="0" Style="{StaticResource CheckBoxStyle}">Humidité</CheckBox>
+                                <CheckBox x:Name="TemperatureCB" Grid.Row="0" Grid.Column="0" Style="{StaticResource CheckBoxStyle}">Température</CheckBox>
+                                <CheckBox x:Name="DewPointCB" Grid.Row="0" Grid.Column="1" Style="{StaticResource CheckBoxStyle}">Point de rosée</CheckBox>
+                                <CheckBox x:Name="HumidityCB" Grid.Row="1" Grid.Column="0" Style="{StaticResource CheckBoxStyle}">Humidité</CheckBox>
                             </Grid>
                         </GroupBox>
                         <!--Groupe Plage de dates-->
@@ -185,7 +190,7 @@
                     </StackPanel>
                 </ScrollViewer>
                 <!--Bouton Appliquer les filtres-->
-                <Button Style="{StaticResource BtnStyle}" Margin="20,10,20,10" Grid.Row="2" Content="Appliquer les filtres"/>
+                <Button x:Name="ApplyFiltersBtn" Style="{StaticResource BtnStyle}" Margin="20,10,20,10" Grid.Row="2" Content="Appliquer les filtres" Click="ApplyFiltersBtn_Click"/>
             </Grid>
         </GroupBox>
         <!-- Graphique -->
@@ -197,7 +202,8 @@
                 </StackPanel>
             </GroupBox.Header>
             <!-- Insérer graphique ici -->
-            <TextBlock x:Name="ChooseSchoolHintMessage" TextAlignment="Center" VerticalAlignment="Center" Foreground="Gray">Veuillez sélectionner une école.</TextBlock>
+            <oxy:PlotView Model="{Binding MyModel}">
+            </oxy:PlotView>
         </GroupBox>
         <!-- Footer -->
         <StackPanel Grid.ColumnSpan="2" Grid.Row="2" Orientation="Vertical" Margin="10">

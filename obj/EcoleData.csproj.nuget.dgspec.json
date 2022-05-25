@@ -45,6 +45,10 @@
         "net5.0-windows7.0": {
           "targetAlias": "net5.0-windows",
           "dependencies": {
+            "OxyPlot.Wpf": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
             "WindowsAPICodePack-Core": {
               "target": "Package",
               "version": "[1.1.2, )"
