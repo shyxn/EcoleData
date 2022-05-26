@@ -105,7 +105,7 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <ComboBox x:Name="SchoolsComboBox" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="25" Margin="10" SelectionChanged="SchoolsComboBox_SelectionChanged" FontSize="16" Text="Sélectionner une école..."/>
+                                <ComboBox x:Name="SchoolsComboBox" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="25" Margin="10" SelectionChanged="SchoolsComboBox_SelectionChanged" IsEnabled="False" FontSize="16" Text="Sélectionner une école..."/>
                                 <TextBlock x:Name="SchoolTitle" Grid.Column="1" Grid.Row="1" FontSize="14" FontWeight="Bold" VerticalAlignment="Bottom" TextAlignment="Center" Margin="5">École de [nom]</TextBlock>
                                 <TextBlock x:Name="SchoolCaptorsNb" Grid.Column="1" Grid.Row="2" FontWeight="Bold" TextAlignment="Center">X capteurs</TextBlock>
                                 <Canvas Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" MinHeight="20" Width="100" Background="LightGray" Margin="10"></Canvas>

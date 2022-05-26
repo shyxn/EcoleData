@@ -17,18 +17,18 @@ namespace EcoleData.Tree
         public double DewPoint { get; set; }
         public Record(string id, string datetime, string temperature, string humidity, string dewpoint)
         {
-            var ci = new CultureInfo("fr-CH");
+            var ci = CultureInfo.InvariantCulture;
             try
             {
-                ID = Convert.ToInt32(id, ci);
-                Time = DateTime.ParseExact(datetime, "yyyy-MM-dd HH:mm:ss", ci);
+                ID = Convert.ToInt32(id);
+                Time = DateTime.Parse(datetime);
                 Temperature = Convert.ToDouble(temperature.Split(' ').First(), ci);
                 Humidity = Convert.ToDouble(humidity.Split(' ').First(), ci);
                 DewPoint = Convert.ToDouble(dewpoint.Split(' ').First(), ci);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine("RECORD : " + ex.Message);
             }
         }
     }

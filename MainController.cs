@@ -30,6 +30,7 @@ namespace EcoleData
         {
             this._mainWindow = vue;
             this._mainModel = new MainModel(this);
+            this._mainViewModel = new OxyViewModel();
             this._filters = new Filters();
         }
 
@@ -65,8 +66,9 @@ namespace EcoleData
                 .ForEach(x => x.Value.Floors.ToList()
                     .ForEach(x => x.Value.Locations.ToList().ForEach(x => x.Value.ReadCSV())));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 this._mainWindow.FolderNameDisplayer.Text = "Dossier inexistant ou invalide.";
                 return;
             }
@@ -93,12 +95,16 @@ namespace EcoleData
         {
             this._mainWindow.SchoolsComboBox.Items.Clear();
             DataSchool.Schools.Keys.ToList().ForEach(schoolName => this._mainWindow.SchoolsComboBox.Items.Add(schoolName));
+            this._mainWindow.SchoolsComboBox.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Au moment où une école est choisie.
+        /// </summary>
         public void UpdateFilters(string schoolName)
         {
             this._filters.SelectedSchool = DataSchool.Schools[schoolName];
-
+            
             // Nombre de capteurs
             int count = this._filters.SelectedSchool.GetNbOfSensors();
             this._mainWindow.SchoolCaptorsNb.Text = count + " capteur" + (count > 1 ? "s" : "");
@@ -116,6 +122,7 @@ namespace EcoleData
                 Grid.SetRow(newCB, Convert.ToInt32(newCB.Content) / 5);
                 Grid.SetColumn(newCB, Convert.ToInt32(newCB.Content) % 5);
                 this._mainWindow.FloorsGrid.Children.Add(newCB);
+                this._filters.Floors.Add(newCB);
             }
 
             // Filtres Plage de date
@@ -134,17 +141,24 @@ namespace EcoleData
             this._mainWindow.StartDatePicker.SelectedDate = minStartDate;
             this._mainWindow.EndDatePicker.SelectedDate = maxEndDate;
 
+            ShowGraph();
         }
 
-        public void ApplyFilters()
+        private void SaveFloorsCheckBoxes()
         {
-            // Configuration de _filters
-            // Étages
+            if (this._filters.Floors is not null) { this._filters.Floors.Clear(); };
             foreach (UIElement element in this._mainWindow.FloorsGrid.Children)
             {
                 if (element is CheckBox)
                     this._filters.Floors.Add((CheckBox)element);
             }
+        }
+        
+        public void ApplyFilters()
+        {
+            // Configuration de _filters
+            // Étages
+            SaveFloorsCheckBoxes();
 
             // Emplacements
             this._filters.Locations["Salle"] = (bool)this._mainWindow.SalleSensorCB.IsChecked;
@@ -154,7 +168,10 @@ namespace EcoleData
             this._filters.Values["Température"] = (bool)this._mainWindow.TemperatureCB.IsChecked;
             this._filters.Values["Humidité"] = (bool)this._mainWindow.HumidityCB.IsChecked;
             this._filters.Values["Point de rosée"] = (bool)this._mainWindow.DewPointCB.IsChecked;
+
+            ShowGraph();
         }
+
         public void ShowGraph()
         {
             // Pour tous les étages cochés...
@@ -170,7 +187,8 @@ namespace EcoleData
                 });
             }
             // Actualise en même temps le graphique et les sets de données (performance? -> sinon RefreshPlot())
-            this._mainViewModel.MyModel.InvalidatePlot(true);
+            // Todo : https://blog.bartdemeyer.be/2013/03/creating-graphs-in-wpf-using-oxyplot/
+            this._mainViewModel.MyModel.PlotView.InvalidatePlot(true);
         }
 
         /// <summary>
@@ -190,6 +208,11 @@ namespace EcoleData
                 else if (location.Key.Contains("Couloir") && this._filters.Locations["Couloir"])
                 {
                     locationValue = "Couloir";
+                }
+
+                if (string.IsNullOrEmpty(locationValue))
+                {
+                    return;
                 }
                 // Pas mieux d'utiliser une liste de strings ?? Idée : faire un enum statique contenant "Température", "Humidité", et "Point de rosée"
                 if (this._filters.Values["Température"])

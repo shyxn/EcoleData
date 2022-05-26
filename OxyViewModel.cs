@@ -35,7 +35,8 @@ namespace EcoleData
                 IsPanEnabled = false,
                 Angle = 30
             };
-            SetPlotGraph();
+            this.MyModel = new PlotModel { Title = "Relevé de sondes de [ville]" };
+            this.MyModel.Axes.Add(this.DateXAxis);
         }
 
         public void RemoveCelsiusAxis()
@@ -94,13 +95,6 @@ namespace EcoleData
         public void ClearAllSeries()
         {
             this.MyModel.Series.Clear();
-        }
-
-        public void SetPlotGraph()
-        {
-            this.MyModel = new PlotModel { Title = "Relevé de sondes de [ville]" };
-            //List<Measure> data = null; // aller chercher les données
-            
         }
     }
 }

@@ -157,27 +157,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pe41qrd\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\mrgnl\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pe41qrd\\Desktop\\EcoleData\\EcoleData.csproj",
+      "projectUniqueName": "C:\\Users\\mrgnl\\Source\\Repos\\shyxn\\EcoleData\\EcoleData.csproj",
       "projectName": "EcoleData",
-      "projectPath": "C:\\Users\\pe41qrd\\Desktop\\EcoleData\\EcoleData.csproj",
-      "packagesPath": "C:\\Users\\pe41qrd\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pe41qrd\\Desktop\\EcoleData\\obj\\",
+      "projectPath": "C:\\Users\\mrgnl\\Source\\Repos\\shyxn\\EcoleData\\EcoleData.csproj",
+      "packagesPath": "C:\\Users\\mrgnl\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\mrgnl\\Source\\Repos\\shyxn\\EcoleData\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\pe41qrd\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\mrgnl\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net5.0-windows7.0"
@@ -233,7 +231,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   },

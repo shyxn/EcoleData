@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "x66GtlpMADHLbEoUWSTgxCIV7YNXUVrlCO5+/eg9fzoI5+us1jylt4YVwg+jugE9SkB20e3H3GzbHy8gS/JTxA==",
+  "dgSpecHash": "RW6ROOgcJt9jpCViWIgb2mJMbnB5mdDcvleULdA3wvpPTGEueda0xj2ZW7KwnNsmMY+3du2qG/ceuE4PBhj1iw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\pe41qrd\\Desktop\\EcoleData\\EcoleData.csproj",
+  "projectFilePath": "C:\\Users\\mrgnl\\Source\\Repos\\shyxn\\EcoleData\\EcoleData.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\pe41qrd\\.nuget\\packages\\oxyplot.core\\2.1.0\\oxyplot.core.2.1.0.nupkg.sha512",
-    "C:\\Users\\pe41qrd\\.nuget\\packages\\oxyplot.wpf\\2.1.0\\oxyplot.wpf.2.1.0.nupkg.sha512",
-    "C:\\Users\\pe41qrd\\.nuget\\packages\\oxyplot.wpf.shared\\2.1.0\\oxyplot.wpf.shared.2.1.0.nupkg.sha512",
-    "C:\\Users\\pe41qrd\\.nuget\\packages\\windowsapicodepack-core\\1.1.2\\windowsapicodepack-core.1.1.2.nupkg.sha512",
-    "C:\\Users\\pe41qrd\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512"
+    "C:\\Users\\mrgnl\\.nuget\\packages\\oxyplot.core\\2.1.0\\oxyplot.core.2.1.0.nupkg.sha512",
+    "C:\\Users\\mrgnl\\.nuget\\packages\\oxyplot.wpf\\2.1.0\\oxyplot.wpf.2.1.0.nupkg.sha512",
+    "C:\\Users\\mrgnl\\.nuget\\packages\\oxyplot.wpf.shared\\2.1.0\\oxyplot.wpf.shared.2.1.0.nupkg.sha512",
+    "C:\\Users\\mrgnl\\.nuget\\packages\\windowsapicodepack-core\\1.1.2\\windowsapicodepack-core.1.1.2.nupkg.sha512",
+    "C:\\Users\\mrgnl\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512"
   ],
   "logs": [
     {

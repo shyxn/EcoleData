@@ -30,6 +30,7 @@ namespace EcoleData
                 ["Humidité"] = false,
                 ["Point de rosée"] = false
             };
+            Floors = new();
         }
     }
 }
