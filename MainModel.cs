@@ -16,6 +16,15 @@ namespace EcoleData
         private const string USER_SETTINGS_FILENAME = "settings.xml";
         private string _defaultSettingsPath = Directory.GetCurrentDirectory() + "\\Settings\\" + USER_SETTINGS_FILENAME;
         
+        /// <summary>
+        /// Date maximum possible déterminée dans la création de l'arborescence.
+        /// </summary>
+        public DateTime MaxDate { get; set; }
+        /// <summary>
+        /// Date minimum possible déterminée dans la création de l'arborescence.
+        /// </summary>
+        public DateTime MinDate { get; set; }
+
         public Settings Settings { get; private set; }
 
         public MainModel(MainController mainController)

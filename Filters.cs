@@ -14,8 +14,8 @@ namespace EcoleData
         public List<CheckBox> Floors { get; set; }
         public Dictionary<string, bool> Locations { get; set; }
         public Dictionary<string, bool> Values { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public Filters()
         {
             // Paramètres par défaut

@@ -32,6 +32,8 @@ namespace EcoleData
             this._mainModel = new MainModel(this);
             this._mainViewModel = new OxyViewModel();
             this._filters = new Filters();
+            this._mainWindow.PlotView.Model = this._mainViewModel.PlotModel;
+            this._mainWindow.PlotView.Visibility = Visibility.Hidden;
         }
 
         public void SetNewFolderPath(string folderPath) => this._mainModel.SetNewFolderPath(folderPath);
@@ -87,7 +89,8 @@ namespace EcoleData
         {
             return DataSchool.Schools.Count > 0
                 && DataSchool.Schools.Values.ToList()
-                .TrueForAll(school => school.Floors.Count > 0 && school.Floors.Values.ToList()
+                .TrueForAll(school => school.Floors.Count > 0 
+                    && school.Floors.Values.ToList()
                     .TrueForAll(floor => floor.Locations.Count > 0));
         }
 
@@ -104,7 +107,7 @@ namespace EcoleData
         public void UpdateFilters(string schoolName)
         {
             this._filters.SelectedSchool = DataSchool.Schools[schoolName];
-            
+
             // Nombre de capteurs
             int count = this._filters.SelectedSchool.GetNbOfSensors();
             this._mainWindow.SchoolCaptorsNb.Text = count + " capteur" + (count > 1 ? "s" : "");
@@ -116,7 +119,7 @@ namespace EcoleData
                 CheckBox newCB = new CheckBox()
                 {
                     Content = floorName.Split(' ')[1],
-                    IsChecked = true,
+                    IsChecked = floorName == "Etage 0" ? true : false,
                     FontWeight = System.Windows.FontWeights.Normal
                 };
                 Grid.SetRow(newCB, Convert.ToInt32(newCB.Content) / 5);
@@ -128,6 +131,7 @@ namespace EcoleData
             // Filtres Plage de date
             DateTime minStartDate;
             DateTime maxEndDate = minStartDate = DataSchool.Schools[schoolName].Floors.Values.First().Locations.Values.First().Records.First().Time;
+
             DataSchool.Schools[schoolName].Floors.Values.ToList().ForEach(floor => floor.Locations.Values.ToList().ForEach(location =>
             {
                 DateTime minDate = location.Records.Min(i => i.Time);
@@ -138,28 +142,108 @@ namespace EcoleData
                     maxEndDate = maxDate;
             }));
 
-            this._mainWindow.StartDatePicker.SelectedDate = minStartDate;
-            this._mainWindow.EndDatePicker.SelectedDate = maxEndDate;
+            this._mainWindow.StartDatePicker.SelectedDate = this._mainModel.MinDate = this._filters.StartDate = minStartDate;
+            this._mainWindow.EndDatePicker.SelectedDate = this._mainModel.MaxDate = this._filters.EndDate = maxEndDate;
+            this._mainViewModel.UpdateDateBounds(minStartDate, maxEndDate);
 
-            ShowGraph();
+            this.SetDefaultFilters();
         }
 
-        private void SaveFloorsCheckBoxes()
+        /// <summary>
+        /// Ne change pas l'école sélectionnée.
+        /// </summary>
+        public void SetDefaultFilters()
         {
+            // Réinitialiser les checkboxes
+            foreach (CheckBox? element in this._mainWindow.FloorsGrid.Children)
+            {
+                element.IsChecked = element.Content.ToString() == "0" ? true : false;
+            }
+
+            // Réinitialiser les emplacements
+            this._mainWindow.SalleSensorCB.IsChecked = true;
+            this._mainWindow.CouloirSensorCB.IsChecked = false;
+
+            // Réinitialiser les valeurs
+            this._mainWindow.TemperatureCB.IsChecked = true;
+            this._mainWindow.HumidityCB.IsChecked = false;
+            this._mainWindow.DewPointCB.IsChecked = false;
+
+            // Réinitialiser les dates
+            this._mainWindow.StartDatePicker.SelectedDate = this._mainModel.MinDate;
+            this._mainWindow.EndDatePicker.SelectedDate = this._mainModel.MaxDate;
+            this._mainViewModel.UpdateDateBounds(this._mainModel.MinDate, this._mainModel.MaxDate);
+            CheckAndApplyFilters();
+        }
+        public void CheckAndApplyFilters()
+        {
+            // Configuration de _filters
+            SaveAllFilters();
+            if (AreFiltersCorrect())
+            {
+                // Affichage des graphiques
+                ShowGraph();
+            }
+        }
+        private bool AreFiltersCorrect()
+        {
+            this._mainWindow.HideAllFiltersMessages();
+            // Les conditions sont écrites de manière "Vrai si rien n'est coché"
+            // Si aucun étage est coché
+            if (this._filters.Floors.TrueForAll(checkbox => !(bool)checkbox.IsChecked))
+            {
+                this._mainWindow.FloorsFiltersErrorMessage.Visibility = Visibility.Visible;
+            }
+
+            // Si aucun emplacement est coché
+            if (this._filters.Locations.Values.ToList().TrueForAll(isChecked => !isChecked))
+            {
+                this._mainWindow.LocationsFilterErrorMessage.Visibility = Visibility.Visible;
+            }
+
+            // Si aucune valeur est cochée
+            if (this._filters.Values.Values.ToList().TrueForAll(isChecked => !isChecked))
+            {
+                this._mainWindow.ValuesFilterErrorMessage.Visibility = Visibility.Visible;
+            }
+
+            // Correction automatique si les dates dépassent les valeurs limites
+            if (this._filters.EndDate > this._mainModel.MaxDate)
+            {
+                this._mainWindow.EndDatePicker.SelectedDate = this._filters.EndDate = this._mainModel.MaxDate;
+            }
+            
+            if (this._filters.StartDate < this._mainModel.MinDate)
+            {
+                this._mainWindow.StartDatePicker.SelectedDate = this._filters.StartDate = this._mainModel.MinDate;
+            }
+
+            // Si la date minimale est plus récente que la date maximale
+            if (this._filters.EndDate <= this._filters.StartDate)
+            {
+                this._mainWindow.DatesFilterErrorMessage.Text = "La date de départ ne peut pas être supérieure ou égale à la date de fin.";
+                this._mainWindow.DatesFilterErrorMessage.Visibility = Visibility.Visible;
+            }
+
+            // Si tous les messages d'erreur sont cachés, les filtres sont validés
+            if (this._mainWindow.AllFiltersErrorMessages.TrueForAll(message => message.Visibility == Visibility.Collapsed))
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Récolte l'état des checkboxes et des dates pour les enregistrer dans MainController._filters.
+        /// </summary>
+        private void SaveAllFilters()
+        {
+            // Étages
             if (this._filters.Floors is not null) { this._filters.Floors.Clear(); };
             foreach (UIElement element in this._mainWindow.FloorsGrid.Children)
             {
                 if (element is CheckBox)
                     this._filters.Floors.Add((CheckBox)element);
             }
-        }
-        
-        public void ApplyFilters()
-        {
-            // Configuration de _filters
-            // Étages
-            SaveFloorsCheckBoxes();
-
             // Emplacements
             this._filters.Locations["Salle"] = (bool)this._mainWindow.SalleSensorCB.IsChecked;
             this._filters.Locations["Couloir"] = (bool)this._mainWindow.CouloirSensorCB.IsChecked;
@@ -169,13 +253,17 @@ namespace EcoleData
             this._filters.Values["Humidité"] = (bool)this._mainWindow.HumidityCB.IsChecked;
             this._filters.Values["Point de rosée"] = (bool)this._mainWindow.DewPointCB.IsChecked;
 
-            ShowGraph();
+            // Dates
+            this._filters.StartDate = (DateTime)this._mainWindow.StartDatePicker.SelectedDate;
+            this._filters.EndDate = (DateTime)this._mainWindow.EndDatePicker.SelectedDate;
         }
-
         public void ShowGraph()
         {
+            this._mainViewModel.ClearAllSeries();
+            this._mainWindow.NoDataLabel.Visibility = Visibility.Hidden;
+            
             // Pour tous les étages cochés...
-            foreach (CheckBox floorBox in this._filters.Floors)
+            foreach (CheckBox floorBox in this._filters.Floors.Where(checkbox => (bool)checkbox.IsChecked))
             {
                 this._filters.SelectedSchool.Floors.ToList().ForEach(floor =>
                 {
@@ -186,19 +274,29 @@ namespace EcoleData
                     }
                 });
             }
-            // Actualise en même temps le graphique et les sets de données (performance? -> sinon RefreshPlot())
+            this._mainViewModel.UpdateDateBounds(this._filters.StartDate, this._filters.EndDate);
+
+            // Actualise en même temps le graphique et les sets de données (performance?)
             // Todo : https://blog.bartdemeyer.be/2013/03/creating-graphs-in-wpf-using-oxyplot/
-            this._mainViewModel.MyModel.PlotView.InvalidatePlot(true);
+            this._mainWindow.PlotView.InvalidatePlot(true);
+                
+            this._mainWindow.PlotView.Visibility = Visibility.Visible;
+            if (this._mainViewModel.PlotModel.Series.Count == 0)
+            {
+                this._mainWindow.NoDataLabel.Visibility = Visibility.Visible;
+                this._mainWindow.PlotView.Visibility = Visibility.Hidden;
+            }
         }
 
         /// <summary>
         /// Va essayer de créer une série par emplacement (si les filtres le demandent)
         /// </summary>
-        /// <param name="floor">Étage contenant tous les emplacements à traiter</param>
+        /// <param name="floorPair">Étage contenant tous les emplacements à traiter</param>
         public void CreateSeriesForEachLocation(KeyValuePair<string, Floor> floorPair)
         {
             floorPair.Value.Locations.ToList().ForEach(location =>
             {
+                // string indiquant littéralement l'emplacement ("Salle" ou "Couloir")
                 string locationValue = string.Empty;
                 string recordValue = string.Empty;
                 if (location.Key.Contains("Salle") && this._filters.Locations["Salle"])
@@ -214,21 +312,17 @@ namespace EcoleData
                 {
                     return;
                 }
-                // Pas mieux d'utiliser une liste de strings ?? Idée : faire un enum statique contenant "Température", "Humidité", et "Point de rosée"
-                if (this._filters.Values["Température"])
+                // dataValue.Key est le nom littéral de la valeur ("Température" p.ex) et dataValue.Value est le booléen qui indique si la valeur est cochée dans les filtres
+                this._filters.Values.ToList().ForEach(dataValue =>
                 {
-                    recordValue = "Température";   
-                }
-                if (this._filters.Values["Humidité"])
-                {
-                    recordValue = "Humidité";
-                }
-                if (this._filters.Values["Point de rosée"])
-                {
-                    recordValue = "Point de rosée";
-                }
-
-                this._mainViewModel.AddLineSerie(Utils.GetSerieColor(floorPair.Key.Split(" ").Last()), recordValue, locationValue, location);
+                    // Ajouter chaque valeur souhaitée (valeur du dictionnaire à true)
+                    if (dataValue.Value)
+                    {
+                        OxyColor color = Utils.GetSerieColor(Convert.ToInt32(floorPair.Key.Split(" ").Last()), dataValue.Key);
+                        
+                        this._mainViewModel.AddLineSerie(color, dataValue.Key, locationValue, location, this._filters.StartDate, this._filters.EndDate);
+                    }
+                });
             });
         }
     }
