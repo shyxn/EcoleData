@@ -33,12 +33,12 @@ namespace EcoleData
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
                 Angle = 30,
-                Title = "DateTimeAxis"
+                Title = "Date de l'enregistrement"
             };
             this.CelsiusAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "CelsiusAxis",
+                Title = "Température et Point de rosée - Degrés [°C]",
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
                 PositionTier = 1
@@ -46,7 +46,7 @@ namespace EcoleData
             this.PercentageAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "PercentageAxis",
+                Title = "Humidité - Pourcentage [%]",
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
                 PositionTier = 0
@@ -130,8 +130,8 @@ namespace EcoleData
         }
         public void UpdateDateBounds(DateTime startTime, DateTime endTime)
         {
-            this.PlotModel.Axes.Where(axis => axis.Title == "DateTimeAxis").First().Maximum = endTime.ToOADate();
-            this.PlotModel.Axes.Where(axis => axis.Title == "DateTimeAxis").First().Minimum = startTime.ToOADate();
+            this.PlotModel.Axes.Where(axis => axis.Title == "Date de l'enregistrement").First().Maximum = endTime.ToOADate();
+            this.PlotModel.Axes.Where(axis => axis.Title == "Date de l'enregistrement").First().Minimum = startTime.ToOADate();
         }
     }
 }

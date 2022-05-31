@@ -1,10 +1,12 @@
 ﻿using OxyPlot;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace EcoleData
 {
@@ -19,7 +21,7 @@ namespace EcoleData
 
         public static OxyColor GetSerieColor(int floorNb, string value)
         {
-            ColorFamily floorFamily = ColorFamilies.Where(family => family.FloorNumber == floorNb).First();
+            ColorFamily floorFamily = GetColorFamily(floorNb);
             return OxyColor.Parse(value switch
             {
                 "Température" => floorFamily.DarkColor,
@@ -27,14 +29,18 @@ namespace EcoleData
                 "Point de rosée" => floorFamily.LightColor,
             });
         }
+
+        public static Brush GetFaceColor(int floorNb, Func<ColorFamily, string> familyProperty) => (Brush)new BrushConverter().ConvertFromString(familyProperty(GetColorFamily(floorNb)));
+        
+        private static ColorFamily GetColorFamily(int floorNb) => ColorFamilies.Where(family => family.FloorNumber == floorNb).First();
             
         public static List<ColorFamily> ColorFamilies = new()
         {
             new ColorFamily()
             {
                 FloorNumber = 0,
-                DarkColor = "#287CA1",
-                NormalColor = "#20637F",
+                DarkColor = "#20637F",
+                NormalColor = "#287CA1",
                 LightColor = "#3198C4"
             },
             new ColorFamily()

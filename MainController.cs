@@ -107,6 +107,8 @@ namespace EcoleData
         public void UpdateFilters(string schoolName)
         {
             this._filters.SelectedSchool = DataSchool.Schools[schoolName];
+            // Logo des étages
+            this._mainWindow.PrintFloorLogo(this._filters.SelectedSchool.Floors.Count);
 
             // Nombre de capteurs
             int count = this._filters.SelectedSchool.GetNbOfSensors();

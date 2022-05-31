@@ -27,12 +27,14 @@ namespace EcoleData
         private List<UIElement> _elementsToHideIfNoFolder;
         public List<TextBlock> AllFiltersErrorMessages { get; set; }
         public PlotView PlotView { get; set; }
+        private List<Polygon> _allRectanglePolygons { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             this.PlotView = new PlotView() { Padding = new Thickness(0, 0, 200, 0)};
             this.GraphPlace.Children.Add(this.PlotView);
             this._controller = new MainController(this);
+            this._allRectanglePolygons = new();
 
             this._elementsToHideIfNoFolder = new()
             {
@@ -106,6 +108,130 @@ namespace EcoleData
         private void ResetFiltersBtn_Click(object sender, RoutedEventArgs e)
         {
             this._controller.SetDefaultFilters();
+        }
+
+        public void PrintFloorLogo(int floorsNb)
+        {
+            this.LogoPlace.Children.Clear();
+            this._allRectanglePolygons.Clear();
+
+            int scaler = 7;
+            int nextFloorYStep = 3 * scaler;
+
+            // { y ; x }
+            Point logoAnchor = new Point(0, 0);
+            List<Point> upFacePoints = new()
+            {
+                new Point(2, 0),
+                new Point(0, 2),
+                new Point(5, 2),
+                new Point(7, 0),
+            };
+
+            // Calibrage & mise à l'échelle
+            upFacePoints = upFacePoints.Select<Point, Point>(p => 
+            {
+                p.X += logoAnchor.X;
+                p.Y += logoAnchor.Y;
+                p.X *= scaler;
+                p.Y *= scaler;
+                return p;
+            }
+            ).ToList();
+
+            // Dessiner la face du devant - contient le chiffre
+            List<Point> frontFacePoints = new()
+            {
+                upFacePoints[1],
+                new Point(upFacePoints[1].X, upFacePoints[1].Y + nextFloorYStep),
+                new Point(upFacePoints[2].X, upFacePoints[2].Y + nextFloorYStep),
+                upFacePoints[2],
+            };
+            // Dessiner la face de côté
+            List<Point> sideFacePoints = new()
+            {
+                upFacePoints[2],
+                new Point(upFacePoints[2].X, upFacePoints[2].Y + nextFloorYStep),
+                new Point(upFacePoints[3].X, upFacePoints[3].Y + nextFloorYStep),
+                upFacePoints[3],
+            };
+
+            // Dessiner la première face : face du dessus
+            Polygon upFace = new Polygon()
+            {
+                Stroke = Brushes.Black,
+                Fill = (Brush)Utils.GetFaceColor(floorsNb - 1, family => family.LightColor),
+                StrokeThickness = 1,
+                Points = new PointCollection(upFacePoints),
+            };
+            this.LogoPlace.Children.Add(upFace);
+
+            // BOUCLE
+            for (int i = floorsNb - 1; i >= 0; i--)
+            {
+                Polygon frontFace = new Polygon()
+                {
+                    Stroke = Brushes.Black,
+                    Fill = (Brush)Utils.GetFaceColor(i, family => family.NormalColor),
+                    StrokeThickness = 1,
+                    Points = new PointCollection(frontFacePoints)
+                };
+                Polygon sideFace = new Polygon()
+                {
+                    Stroke = Brushes.Black,
+                    Fill = (Brush)Utils.GetFaceColor(i, family => family.DarkColor),
+                    StrokeThickness = 1,
+                    Points = new PointCollection(sideFacePoints),
+                };
+                
+                frontFacePoints = frontFacePoints.Select<Point, Point>(p =>
+                {
+                    p.Y += nextFloorYStep;
+                    return p;
+                }).ToList();
+                sideFacePoints = sideFacePoints.Select<Point, Point>(p =>
+                {
+                    p.Y += nextFloorYStep;
+                    return p;
+                }).ToList();
+
+                this.LogoPlace.Children.Add(frontFace);
+                this.LogoPlace.Children.Add(sideFace);
+                this._allRectanglePolygons.Add(frontFace);
+            }
+            PrintNumbersOnFloorsLogo();
+        }
+        public void PrintNumbersOnFloorsLogo()
+        {
+            int floorNb = this._allRectanglePolygons.Count;
+            StackPanel textBlocksStackPanel = new StackPanel()
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            this.LogoPlace.Children.Add(textBlocksStackPanel);
+
+            foreach (Polygon frontFace in this._allRectanglePolygons)
+            {
+                if (floorNb == this._allRectanglePolygons.Count)
+                {
+                    textBlocksStackPanel.Margin = new Thickness(0, frontFace.Points[0].Y, 0, 0);
+                }
+                floorNb--;
+                // Ajouter le chiffre
+                TextBlock tb = new TextBlock();
+                tb.Margin = new Thickness(0);
+                tb.Padding = new Thickness(0);
+                tb.Width = frontFace.Points[3].X - frontFace.Points[0].X;
+                tb.Height = frontFace.Points[1].Y - frontFace.Points[0].Y;
+                tb.Text = floorNb.ToString();
+                tb.TextAlignment = TextAlignment.Center;
+                tb.Foreground = Brushes.White;
+                tb.FontSize = 15;
+                textBlocksStackPanel.Children.Add(tb);
+                Grid.SetZIndex(tb, 10);
+            }
         }
     }
 }
