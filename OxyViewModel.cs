@@ -9,6 +9,7 @@ using OxyPlot.Wpf;
 using OxyPlot.Axes;
 using System.Linq;
 using EcoleData.Tree;
+using OxyPlot.Legends;
 
 namespace EcoleData
 {
@@ -20,20 +21,31 @@ namespace EcoleData
         public PlotModel PlotModel { get; private set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public DateTimeAxis DateTimeAxis { get; set; }
+        public DateTimeAxis DateAxis { get; set; }
+        public DateTimeAxis TimeAxis { get; set; }
         public LinearAxis CelsiusAxis { get; set; }
         public LinearAxis PercentageAxis { get; set; }
         public OxyViewModel()
         {
-            this.DateTimeAxis = new DateTimeAxis
+            this.DateAxis = new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
                 IntervalLength = 60,
-                StringFormat = string.Format(@"dd/MM/yyyy HH:mm:ss"),
+                StringFormat = string.Format(@"dd/MM/yyyy"),
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
-                Angle = 30,
+                PositionTier = 1,
                 Title = "Date de l'enregistrement"
+            };
+            this.TimeAxis = new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                IntervalLength = 60,
+                StringFormat = string.Format(@"HH:mm:ss"),
+                IsPanEnabled = false,
+                IsZoomEnabled = false,
+                PositionTier = 0,
+                Title = "Temps de l'enregistrement"
             };
             this.CelsiusAxis = new LinearAxis
             {
@@ -51,37 +63,41 @@ namespace EcoleData
                 IsZoomEnabled = false,
                 PositionTier = 0
             };
-            this.PlotModel = new PlotModel { Title = "Relevé de sondes de [ville]" };
-            this.PlotModel.Axes.Add(this.DateTimeAxis);
+            this.PlotModel = new PlotModel { DefaultFont = "Roboto"};
+            this.PlotModel.Axes.Add(this.DateAxis);
+            this.PlotModel.Axes.Add(this.TimeAxis);
             this.PlotModel.Axes.Add(this.CelsiusAxis);
             this.PlotModel.Axes.Add(this.PercentageAxis);
+            this.PlotModel.Legends.Add(new Legend()
+            {
+                LegendTitle = "Légende",
+                LegendPosition = LegendPosition.RightTop,
+                LegendPlacement = LegendPlacement.Outside
+            });
         }
 
         public void RemoveCelsiusAxis()
         {
-            this.PlotModel.Axes.Remove(this.PlotModel.Axes.Where(axis => axis.Title == "CelsiusAxis").First());
-        }
-        public void ShowCelsiusAxis()
-        {
-            this.PlotModel.Axes.Add(this.CelsiusAxis);
+            if (this.PlotModel.Axes.Contains(this.CelsiusAxis))
+                this.PlotModel.Axes.Remove(this.CelsiusAxis);
         }
         public void RemovePercentageAxis()
         {
-            this.PlotModel.Axes.Remove(this.PlotModel.Axes.Where(axis => axis.Title == "PercentageAxis").First());
+            if (this.PlotModel.Axes.Contains(this.PercentageAxis))
+                this.PlotModel.Axes.Remove(this.PercentageAxis);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="color"></param>
-        /// <param name="sensorName"></param>
-        /// <param name="value">Soit "Température", soit "Humidité", soit "Point de rosée"</param>
-        /// <param name="locationValue">Soit "Salle", soit "Couloir"</param>
-        /// <param name="locationObject"></param>
-
+        public void ShowCelsiusAxis()
+        {
+            if (!this.PlotModel.Axes.Contains(this.CelsiusAxis))
+                this.PlotModel.Axes.Add(this.CelsiusAxis);
+        }
         public void ShowPercentageAxis()
         {
-            this.PlotModel.Axes.Add(this.PercentageAxis);
+            if (!this.PlotModel.Axes.Contains(this.PercentageAxis))
+                this.PlotModel.Axes.Add(this.PercentageAxis);
         }
+        
+        
 
         /// <summary>
         /// 
@@ -96,7 +112,7 @@ namespace EcoleData
         {
             LineSeries serie = new LineSeries
             {
-                Title = locationPair.Key,
+                Title = locationPair.Key.Split('-')[0] + "-" + locationPair.Key.Split('-')[1] + ", " + (value == "Humidité" ? "[%]" : "[°C]"),
                 Color = color,
                 StrokeThickness = 1,
                 LineStyle = locationValue == "Salle" ? LineStyle.Solid : LineStyle.Dash
@@ -122,7 +138,13 @@ namespace EcoleData
             serie.Points.AddRange(valueDataPoints);
             this.PlotModel.Series.Add(serie);
 
-            // en fonction de sensorName ou de Location, peut-être définir ici quel axe doit s'afficher (
+            // en fonction de value, définir ici quel axe doit s'afficher (
+            if (value == "Humidité")
+                this.ShowPercentageAxis();
+            else
+            {
+                this.ShowCelsiusAxis();
+            }
         }
         public void ClearAllSeries()
         {
@@ -132,6 +154,8 @@ namespace EcoleData
         {
             this.PlotModel.Axes.Where(axis => axis.Title == "Date de l'enregistrement").First().Maximum = endTime.ToOADate();
             this.PlotModel.Axes.Where(axis => axis.Title == "Date de l'enregistrement").First().Minimum = startTime.ToOADate();
+            this.PlotModel.Axes.Where(axis => axis.Title == "Temps de l'enregistrement").First().Maximum = endTime.ToOADate();
+            this.PlotModel.Axes.Where(axis => axis.Title == "Temps de l'enregistrement").First().Minimum = startTime.ToOADate();
         }
     }
 }

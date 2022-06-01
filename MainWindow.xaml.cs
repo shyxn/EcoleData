@@ -32,15 +32,18 @@ namespace EcoleData
         {
             InitializeComponent();
             this.PlotView = new PlotView() { Padding = new Thickness(0, 0, 200, 0)};
+            this.PlotView.IsVisibleChanged += PlotView_IsVisibleChanged;
             this.GraphPlace.Children.Add(this.PlotView);
             this._controller = new MainController(this);
+            this.LoadMessageTextBox.LayoutUpdated += LoadMessageTextBox_LayoutUpdated;
             this._allRectanglePolygons = new();
 
             this._elementsToHideIfNoFolder = new()
             {
                 this.SchoolTitle,
                 this.SchoolCaptorsNb,
-                this.ResetFiltersBtn    
+                this.ResetFiltersBtn,
+                this.PlotView
             };
             this.AllFiltersErrorMessages = new()
             {
@@ -50,6 +53,17 @@ namespace EcoleData
                 this.ValuesFilterErrorMessage
             };
             HideUIElements();
+        }
+
+        private void LoadMessageTextBox_LayoutUpdated(object sender, EventArgs e)
+        {
+            if (this.LoadMessageTextBox.Visibility == Visibility.Visible)
+            {
+                // Commencer ici le chargement des données
+                this._controller.CheckFolderValidity();
+                this.LoadMessageTextBox.Visibility = Visibility.Hidden;
+                Debug.WriteLine("Fin de la recherche des données.");
+            }
         }
 
         private void ChooseFolderBtn_Click(object sender, RoutedEventArgs e)
@@ -71,34 +85,61 @@ namespace EcoleData
 
             if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                string selectedFolderName = dlg.FileName;
                 // Afficher le chemin du dossier
-                this._controller.SetNewFolderPath(selectedFolderName);
-                this._controller.CheckFolderValidity();
+                this._controller.SetNewFolderPath(dlg.FileName);
+                ClearAllUIElements();
             }
         }
-
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            Debug.WriteLine("La fenêtre a fini de charger. Recherche des données...");
+            this.LoadMessageTextBox.Visibility = Visibility.Visible;
+        }
         private void SchoolsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ShowUIElements();
-            string selectedSchoolName = ((ComboBox)sender).SelectedItem.ToString();
-            this.SchoolTitle.Text = "École de " + selectedSchoolName;
-            
-            this._controller.UpdateFilters(selectedSchoolName);
+            if (((ComboBox)sender).Items.Count > 0)
+            {
+                ShowUIElements();
+                string selectedSchoolName = ((ComboBox)sender).SelectedItem.ToString();
+                this.SchoolTitle.Text = "École de " + selectedSchoolName;
+
+                this._controller.UpdateFilters(selectedSchoolName);
+            }
         }
 
         public void HideUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Hidden);
         public void ShowUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Visible);
         public void HideAllFiltersMessages() => this.AllFiltersErrorMessages.ForEach(message => message.Visibility = Visibility.Collapsed);
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        /// <summary>
+        /// Pour quand la sélection de dossiers change.
+        /// Commence à tout charger et finit par afficher le message de chargement des données. (c'est son apparition qui déclenchera la suite)
+        /// </summary>
+        public void ClearAllUIElements()
         {
-            Debug.WriteLine("La fenêtre a fini de charger. Recherche des données...");
-            this.loadHintTextBox.Visibility = Visibility.Visible;
-            this._controller.CheckFolderValidity();
-            this.loadHintTextBox.Visibility = Visibility.Hidden;
-            Debug.WriteLine("Fin de la recherche des données.");
+            // Supprimer tous les polygones
+            this.LogoPlace.Children.Clear();
+            // Supprimer tous les checkboxes étage
+            this.FloorsGrid.Children.Clear();
+            // Décocher toutes les checkboxes
+            this.SalleSensorCB.IsChecked = false;
+            this.CouloirSensorCB.IsChecked = false;
+            this.TemperatureCB.IsChecked = false;
+            this.DewPointCB.IsChecked = false;
+            this.HumidityCB.IsChecked = false;
+            this.SchoolTitle.Text = "";
+            this.SchoolCaptorsNb.Text = "";
+            // Désafficher le graphique. 
+            this.GraphPlace.Visibility = Visibility.Hidden;
+            // Vider le combobox
+            this.SchoolsComboBox.Items.Clear();
+            // Afficher le chargement des données
+            this.LoadMessageTextBox.Visibility = Visibility.Visible;
         }
+
+        // Affiche le message indiquant qu'il n'y a aucune donnée si le PlotView venait à être invisible
+        private void PlotView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
+            this.NoDataLabel.Visibility = this.PlotView.Visibility != Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
 
         private void ApplyFiltersBtn_Click(object sender, RoutedEventArgs e)
         {

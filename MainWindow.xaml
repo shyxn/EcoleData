@@ -41,7 +41,7 @@
         </StackPanel>
         <!-- Choix dossier -->
         <DockPanel Grid.Column="1" Grid.Row="0" Margin="10">
-            <TextBlock x:Name="loadHintTextBox">Chargement des données en cours...</TextBlock>
+            <TextBlock x:Name="LoadMessageTextBox" Margin="50, 20, 0, 20" VerticalAlignment="Center" FontFamily="Roboto" FontSize="20">Chargement des données en cours...</TextBlock>
             <Grid HorizontalAlignment="Right" Margin="0,0,5,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

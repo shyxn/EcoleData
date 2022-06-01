@@ -107,6 +107,7 @@ namespace EcoleData
         public void UpdateFilters(string schoolName)
         {
             this._filters.SelectedSchool = DataSchool.Schools[schoolName];
+            this._filters.SelectedSchoolName = schoolName;
             // Logo des étages
             this._mainWindow.PrintFloorLogo(this._filters.SelectedSchool.Floors.Count);
 
@@ -259,10 +260,13 @@ namespace EcoleData
             this._filters.StartDate = (DateTime)this._mainWindow.StartDatePicker.SelectedDate;
             this._filters.EndDate = (DateTime)this._mainWindow.EndDatePicker.SelectedDate;
         }
+      
         public void ShowGraph()
         {
             this._mainViewModel.ClearAllSeries();
-            this._mainWindow.NoDataLabel.Visibility = Visibility.Hidden;
+            this._mainWindow.GraphPlace.Visibility = Visibility.Visible;
+
+            this._mainViewModel.PlotModel.Title = "École de " + this._filters.SelectedSchoolName;
             
             // Pour tous les étages cochés...
             foreach (CheckBox floorBox in this._filters.Floors.Where(checkbox => (bool)checkbox.IsChecked))
@@ -314,6 +318,8 @@ namespace EcoleData
                 {
                     return;
                 }
+                this._mainViewModel.RemoveCelsiusAxis();
+                this._mainViewModel.RemovePercentageAxis();
                 // dataValue.Key est le nom littéral de la valeur ("Température" p.ex) et dataValue.Value est le booléen qui indique si la valeur est cochée dans les filtres
                 this._filters.Values.ToList().ForEach(dataValue =>
                 {

@@ -11,6 +11,7 @@ namespace EcoleData
     public class Filters
     {
         public School SelectedSchool { get; set; }
+        public string SelectedSchoolName { get; set; }
         public List<CheckBox> Floors { get; set; }
         public Dictionary<string, bool> Locations { get; set; }
         public Dictionary<string, bool> Values { get; set; }
