@@ -11,7 +11,6 @@ namespace EcoleData
 {
     public class Settings
     {
-        
         public string FolderPath { get; set; }
 
         public Settings()

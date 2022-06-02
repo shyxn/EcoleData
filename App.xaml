@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-
+        <FontFamily x:Key="Roboto">pack://application:,,,/Media/fonts/#Roboto</FontFamily>
+        
         <!-- https://tarundotnet.wordpress.com/2011/12/19/how-to-enlarge-or-re-size-calendar-in-wpf-datepicker/ -->
         <Style x:Key="styleCalendar" TargetType="{x:Type Calendar}">
             <Setter Property="Template">
@@ -28,8 +29,14 @@
         </Style>
 
         <Style x:Key="BtnStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Tan" />
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="15" />
+                </Style>
+            </Style.Resources>
+            <Setter Property="Background" Value="PeachPuff" />
             <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
         </Style>
 
         <Style x:Key="CheckBoxBorderStyle" TargetType="{x:Type Border}">

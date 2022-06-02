@@ -12,6 +12,7 @@ using EcoleData.Tree;
 using System.Windows;
 using System.Windows.Controls;
 using OxyPlot;
+using System.Windows.Media;
 
 namespace EcoleData
 {
@@ -32,8 +33,10 @@ namespace EcoleData
             this._mainModel = new MainModel(this);
             this._mainViewModel = new OxyViewModel();
             this._filters = new Filters();
+            this._mainViewModel.PlotModel.TitlePadding = 10;
             this._mainWindow.PlotView.Model = this._mainViewModel.PlotModel;
             this._mainWindow.PlotView.Visibility = Visibility.Hidden;
+            this._mainViewModel.PlotModel.DefaultFont = "Roboto";
         }
 
         public void SetNewFolderPath(string folderPath) => this._mainModel.SetNewFolderPath(folderPath);

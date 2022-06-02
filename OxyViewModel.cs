@@ -35,7 +35,9 @@ namespace EcoleData
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
                 PositionTier = 1,
-                Title = "Date de l'enregistrement"
+                Title = "Date de l'enregistrement",
+                AxisTitleDistance = 10,
+                Tag = "Date"
             };
             this.TimeAxis = new DateTimeAxis
             {
@@ -45,7 +47,7 @@ namespace EcoleData
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
                 PositionTier = 0,
-                Title = "Temps de l'enregistrement"
+                Tag = "Temps"
             };
             this.CelsiusAxis = new LinearAxis
             {
@@ -53,6 +55,7 @@ namespace EcoleData
                 Title = "Température et Point de rosée - Degrés [°C]",
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
+                AxisTitleDistance = 6,
                 PositionTier = 1
             };
             this.PercentageAxis = new LinearAxis
@@ -61,9 +64,10 @@ namespace EcoleData
                 Title = "Humidité - Pourcentage [%]",
                 IsPanEnabled = false,
                 IsZoomEnabled = false,
+                AxisTitleDistance = 6,
                 PositionTier = 0
             };
-            this.PlotModel = new PlotModel { DefaultFont = "Roboto"};
+            this.PlotModel = new PlotModel();
             this.PlotModel.Axes.Add(this.DateAxis);
             this.PlotModel.Axes.Add(this.TimeAxis);
             this.PlotModel.Axes.Add(this.CelsiusAxis);
@@ -97,8 +101,6 @@ namespace EcoleData
                 this.PlotModel.Axes.Add(this.PercentageAxis);
         }
         
-        
-
         /// <summary>
         /// 
         /// </summary>
@@ -152,10 +154,10 @@ namespace EcoleData
         }
         public void UpdateDateBounds(DateTime startTime, DateTime endTime)
         {
-            this.PlotModel.Axes.Where(axis => axis.Title == "Date de l'enregistrement").First().Maximum = endTime.ToOADate();
-            this.PlotModel.Axes.Where(axis => axis.Title == "Date de l'enregistrement").First().Minimum = startTime.ToOADate();
-            this.PlotModel.Axes.Where(axis => axis.Title == "Temps de l'enregistrement").First().Maximum = endTime.ToOADate();
-            this.PlotModel.Axes.Where(axis => axis.Title == "Temps de l'enregistrement").First().Minimum = startTime.ToOADate();
+            PlotModel.Axes.First(axis => (string)axis.Tag == "Date").Maximum = endTime.ToOADate();
+            PlotModel.Axes.First(axis => (string)axis.Tag == "Date").Minimum = startTime.ToOADate();
+            PlotModel.Axes.First(axis => (string)axis.Tag == "Temps").Maximum = endTime.ToOADate();
+            PlotModel.Axes.First(axis => (string)axis.Tag == "Temps").Minimum = startTime.ToOADate();
         }
     }
 }

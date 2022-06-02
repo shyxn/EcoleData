@@ -14,8 +14,8 @@ namespace EcoleData
         private MainController _controller;
 
         private const string USER_SETTINGS_FILENAME = "settings.xml";
-        private string _defaultSettingsPath = Directory.GetCurrentDirectory() + "\\Settings\\" + USER_SETTINGS_FILENAME;
-        
+        private string _defaultSettingsPath;
+
         /// <summary>
         /// Date maximum possible déterminée dans la création de l'arborescence.
         /// </summary>
@@ -29,6 +29,7 @@ namespace EcoleData
 
         public MainModel(MainController mainController)
         {
+            this._defaultSettingsPath = this.GetAssemblyDirectory() + "\\Settings\\" + USER_SETTINGS_FILENAME;
             this._controller = mainController;
             this.Settings = new Settings()
             {
@@ -37,10 +38,19 @@ namespace EcoleData
             
             GetUserSettings();
         }
+        // https://stackoverflow.com/a/283917
+        public string GetAssemblyDirectory()
+        {
+            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            return Path.GetDirectoryName(path);
+        }
         public void CreateSettingsPath()
         {
-            // Si le dossier Settings\UserSettings n'existe pas, alors en créer un
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\Settings\\");
+            // Si le dossier Settings n'existe pas, alors en créer un
+            string settingsPath = GetAssemblyDirectory() + "\\Settings\\";
+            Directory.CreateDirectory(settingsPath);
 
             // Si le fichier Settings\settings.xml n'existe pas, alors en créer un
             if (!File.Exists(_defaultSettingsPath))
