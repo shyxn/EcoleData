@@ -34,7 +34,7 @@ namespace EcoleData.Tree
         {
             if (String.IsNullOrEmpty(this.CSVFilePath)){ return; }
 
-            //Rappel: il faut omettre les 5 premières lignes(0 - 4) qui ne contiennent pas de données
+            // Rappel: il faut omettre les 5 premières lignes(0 - 4) qui ne contiennent pas de données
             List<string> lines = File.ReadAllLines(this.CSVFilePath, Encoding.Latin1).Skip(5).ToList();
 
             // lines.Select allows me to project each line as a Person. 

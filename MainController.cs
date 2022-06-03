@@ -89,8 +89,7 @@ namespace EcoleData
         {
             return DataSchool.Schools.Count > 0
                 && DataSchool.Schools.Values.ToList()
-                .TrueForAll(school => school.Floors.Count > 0 
-                    && school.Floors.Values.ToList()
+                .TrueForAll(school => school.Floors.Count > 0 && school.Floors.Values.ToList()
                     .TrueForAll(floor => floor.Locations.Count > 0));
         }
 
