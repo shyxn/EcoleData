@@ -1,18 +1,15 @@
 ﻿
 // TODO : En-tête
 
+using EcoleData.Tree;
+using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EcoleData.Tree;
 using System.Windows;
 using System.Windows.Controls;
-using OxyPlot;
-using System.Windows.Media;
 
 namespace EcoleData
 {
