@@ -51,12 +51,12 @@ namespace EcoleData
 
             if (!Directory.Exists(folderPath))
             {
-                this._mainWindow.FolderNameDisplayer.Text = "Dossier inexistant ou invalide.";
+                this._mainWindow.folderNameTB.Text = "Dossier inexistant ou invalide.";
                 return;
             }
             #nullable disable
             // Le chemin du dossier existe.
-            this._mainWindow.FolderNameDisplayer.Text = folderPath;
+            this._mainWindow.folderNameTB.Text = folderPath;
             LoadTree();
         }
         public void LoadTree() // Le chemin du dossier sera toujours valide ici.
@@ -74,14 +74,14 @@ namespace EcoleData
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                this._mainWindow.FolderNameDisplayer.Text = "Dossier inexistant ou invalide.";
+                this._mainWindow.folderNameTB.Text = "Dossier inexistant ou invalide.";
                 return;
             }
             
             // Attention, ne vérifie pas la validité des fichiers CSV...
             if (!CheckTreeValidity())
             {
-                this._mainWindow.FolderNameDisplayer.Text = "Dossier inexistant ou invalide.";
+                this._mainWindow.folderNameTB.Text = "Dossier inexistant ou invalide.";
                 return;
             }
             Debug.WriteLine("[LoadTree()] Arborescence terminée et validée.");
@@ -99,9 +99,9 @@ namespace EcoleData
 
         private void UpdateComboBox()
         {
-            this._mainWindow.SchoolsComboBox.Items.Clear();
-            DataSchool.Schools.Keys.ToList().ForEach(schoolName => this._mainWindow.SchoolsComboBox.Items.Add(schoolName));
-            this._mainWindow.SchoolsComboBox.IsEnabled = true;
+            this._mainWindow.schoolsComboBox.Items.Clear();
+            DataSchool.Schools.Keys.ToList().ForEach(schoolName => this._mainWindow.schoolsComboBox.Items.Add(schoolName));
+            this._mainWindow.schoolsComboBox.IsEnabled = true;
         }
 
         /// <summary>
@@ -116,10 +116,10 @@ namespace EcoleData
 
             // Nombre de capteurs
             int count = this._filters.SelectedSchool.GetNbOfSensors();
-            this._mainWindow.SchoolCaptorsNb.Text = count + " capteur" + (count > 1 ? "s" : "");
+            this._mainWindow.schoolCaptorsNb.Text = count + " capteur" + (count > 1 ? "s" : "");
 
             // Filtres étage
-            this._mainWindow.FloorsGrid.Children.Clear();
+            this._mainWindow.floorsGrid.Children.Clear();
             foreach (string floorName in this._filters.SelectedSchool.Floors.Keys)
             {
                 CheckBox newCB = new CheckBox()
@@ -130,7 +130,7 @@ namespace EcoleData
                 };
                 Grid.SetRow(newCB, Convert.ToInt32(newCB.Content) / 5);
                 Grid.SetColumn(newCB, Convert.ToInt32(newCB.Content) % 5);
-                this._mainWindow.FloorsGrid.Children.Add(newCB);
+                this._mainWindow.floorsGrid.Children.Add(newCB);
                 this._filters.Floors.Add(newCB);
             }
 
@@ -148,8 +148,8 @@ namespace EcoleData
                     maxEndDate = maxDate;
             }));
 
-            this._mainWindow.StartDatePicker.SelectedDate = this._mainModel.MinDate = this._filters.StartDate = minStartDate;
-            this._mainWindow.EndDatePicker.SelectedDate = this._mainModel.MaxDate = this._filters.EndDate = maxEndDate;
+            this._mainWindow.startDatePicker.SelectedDate = this._mainModel.MinDate = this._filters.StartDate = minStartDate;
+            this._mainWindow.endDatePicker.SelectedDate = this._mainModel.MaxDate = this._filters.EndDate = maxEndDate;
             this._mainViewModel.UpdateDateBounds(minStartDate, maxEndDate);
 
             this.SetDefaultFilters();
@@ -161,23 +161,23 @@ namespace EcoleData
         public void SetDefaultFilters()
         {
             // Réinitialiser les checkboxes
-            foreach (CheckBox? element in this._mainWindow.FloorsGrid.Children)
+            foreach (CheckBox? element in this._mainWindow.floorsGrid.Children)
             {
                 element.IsChecked = element.Content.ToString() == "0" ? true : false;
             }
 
             // Réinitialiser les emplacements
-            this._mainWindow.SalleSensorCB.IsChecked = true;
-            this._mainWindow.CouloirSensorCB.IsChecked = false;
+            this._mainWindow.salleSensorCB.IsChecked = true;
+            this._mainWindow.couloirSensorCB.IsChecked = false;
 
             // Réinitialiser les valeurs
-            this._mainWindow.TemperatureCB.IsChecked = true;
-            this._mainWindow.HumidityCB.IsChecked = false;
-            this._mainWindow.DewPointCB.IsChecked = false;
+            this._mainWindow.temperatureCB.IsChecked = true;
+            this._mainWindow.humidityCB.IsChecked = false;
+            this._mainWindow.dewPointCB.IsChecked = false;
 
             // Réinitialiser les dates
-            this._mainWindow.StartDatePicker.SelectedDate = this._mainModel.MinDate;
-            this._mainWindow.EndDatePicker.SelectedDate = this._mainModel.MaxDate;
+            this._mainWindow.startDatePicker.SelectedDate = this._mainModel.MinDate;
+            this._mainWindow.endDatePicker.SelectedDate = this._mainModel.MaxDate;
             this._mainViewModel.UpdateDateBounds(this._mainModel.MinDate, this._mainModel.MaxDate);
             CheckAndApplyFilters();
         }
@@ -198,37 +198,37 @@ namespace EcoleData
             // Si aucun étage est coché
             if (this._filters.Floors.TrueForAll(checkbox => !(bool)checkbox.IsChecked))
             {
-                this._mainWindow.FloorsFiltersErrorMessage.Visibility = Visibility.Visible;
+                this._mainWindow.floorsFiltersErrorMsg.Visibility = Visibility.Visible;
             }
 
             // Si aucun emplacement est coché
             if (this._filters.Locations.Values.ToList().TrueForAll(isChecked => !isChecked))
             {
-                this._mainWindow.LocationsFilterErrorMessage.Visibility = Visibility.Visible;
+                this._mainWindow.locationsFilterErrorMsg.Visibility = Visibility.Visible;
             }
 
             // Si aucune valeur est cochée
             if (this._filters.Values.Values.ToList().TrueForAll(isChecked => !isChecked))
             {
-                this._mainWindow.ValuesFilterErrorMessage.Visibility = Visibility.Visible;
+                this._mainWindow.valuesFiltersErrorMsg.Visibility = Visibility.Visible;
             }
 
             // Correction automatique si les dates dépassent les valeurs limites
             if (this._filters.EndDate > this._mainModel.MaxDate)
             {
-                this._mainWindow.EndDatePicker.SelectedDate = this._filters.EndDate = this._mainModel.MaxDate;
+                this._mainWindow.endDatePicker.SelectedDate = this._filters.EndDate = this._mainModel.MaxDate;
             }
             
             if (this._filters.StartDate < this._mainModel.MinDate)
             {
-                this._mainWindow.StartDatePicker.SelectedDate = this._filters.StartDate = this._mainModel.MinDate;
+                this._mainWindow.startDatePicker.SelectedDate = this._filters.StartDate = this._mainModel.MinDate;
             }
 
             // Si la date minimale est plus récente que la date maximale
             if (this._filters.EndDate <= this._filters.StartDate)
             {
-                this._mainWindow.DatesFilterErrorMessage.Text = "La date de départ ne peut pas être supérieure ou égale à la date de fin.";
-                this._mainWindow.DatesFilterErrorMessage.Visibility = Visibility.Visible;
+                this._mainWindow.datesFilterErrorMsg.Text = "La date de départ ne peut pas être supérieure ou égale à la date de fin.";
+                this._mainWindow.datesFilterErrorMsg.Visibility = Visibility.Visible;
             }
 
             // Si tous les messages d'erreur sont cachés, les filtres sont validés
@@ -245,29 +245,29 @@ namespace EcoleData
         {
             // Étages
             if (this._filters.Floors is not null) { this._filters.Floors.Clear(); };
-            foreach (UIElement element in this._mainWindow.FloorsGrid.Children)
+            foreach (UIElement element in this._mainWindow.floorsGrid.Children)
             {
                 if (element is CheckBox)
                     this._filters.Floors.Add((CheckBox)element);
             }
             // Emplacements
-            this._filters.Locations["Salle"] = (bool)this._mainWindow.SalleSensorCB.IsChecked;
-            this._filters.Locations["Couloir"] = (bool)this._mainWindow.CouloirSensorCB.IsChecked;
+            this._filters.Locations["Salle"] = (bool)this._mainWindow.salleSensorCB.IsChecked;
+            this._filters.Locations["Couloir"] = (bool)this._mainWindow.couloirSensorCB.IsChecked;
 
             // Valeurs
-            this._filters.Values["Température"] = (bool)this._mainWindow.TemperatureCB.IsChecked;
-            this._filters.Values["Humidité"] = (bool)this._mainWindow.HumidityCB.IsChecked;
-            this._filters.Values["Point de rosée"] = (bool)this._mainWindow.DewPointCB.IsChecked;
+            this._filters.Values["Température"] = (bool)this._mainWindow.temperatureCB.IsChecked;
+            this._filters.Values["Humidité"] = (bool)this._mainWindow.humidityCB.IsChecked;
+            this._filters.Values["Point de rosée"] = (bool)this._mainWindow.dewPointCB.IsChecked;
 
             // Dates
-            this._filters.StartDate = (DateTime)this._mainWindow.StartDatePicker.SelectedDate;
-            this._filters.EndDate = (DateTime)this._mainWindow.EndDatePicker.SelectedDate;
+            this._filters.StartDate = (DateTime)this._mainWindow.startDatePicker.SelectedDate;
+            this._filters.EndDate = (DateTime)this._mainWindow.endDatePicker.SelectedDate;
         }
       
         public void ShowGraph()
         {
             this._mainViewModel.ClearAllSeries();
-            this._mainWindow.GraphPlace.Visibility = Visibility.Visible;
+            this._mainWindow.graphPlace.Visibility = Visibility.Visible;
 
             this._mainViewModel.PlotModel.Title = "École de " + this._filters.SelectedSchoolName;
             
@@ -292,7 +292,7 @@ namespace EcoleData
             this._mainWindow.PlotView.Visibility = Visibility.Visible;
             if (this._mainViewModel.PlotModel.Series.Count == 0)
             {
-                this._mainWindow.NoDataLabel.Visibility = Visibility.Visible;
+                this._mainWindow.noDataMsg.Visibility = Visibility.Visible;
                 this._mainWindow.PlotView.Visibility = Visibility.Hidden;
             }
         }

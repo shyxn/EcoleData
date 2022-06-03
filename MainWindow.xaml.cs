@@ -1,20 +1,13 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using OxyPlot.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using OxyPlot.Wpf;
 
 namespace EcoleData
 {
@@ -33,35 +26,35 @@ namespace EcoleData
             InitializeComponent();
             this.PlotView = new PlotView() { Padding = new Thickness(0, 0, 200, 0)};
             this.PlotView.IsVisibleChanged += PlotView_IsVisibleChanged;
-            this.GraphPlace.Children.Add(this.PlotView);
+            this.graphPlace.Children.Add(this.PlotView);
             this._controller = new MainController(this);
-            this.LoadMessageTextBox.LayoutUpdated += LoadMessageTextBox_LayoutUpdated;
+            this.loadMessageTB.LayoutUpdated += LoadMessageTextBox_LayoutUpdated;
             this._allRectanglePolygons = new();
 
             this._elementsToHideIfNoFolder = new()
             {
-                this.SchoolTitle,
-                this.SchoolCaptorsNb,
-                this.ResetFiltersBtn,
+                this.schoolTitle,
+                this.schoolCaptorsNb,
+                this.resetFiltersBtn,
                 this.PlotView
             };
             this.AllFiltersErrorMessages = new()
             {
-                this.DatesFilterErrorMessage,
-                this.FloorsFiltersErrorMessage,
-                this.LocationsFilterErrorMessage,
-                this.ValuesFilterErrorMessage
+                this.datesFilterErrorMsg,
+                this.floorsFiltersErrorMsg,
+                this.locationsFilterErrorMsg,
+                this.valuesFiltersErrorMsg
             };
             HideUIElements();
         }
 
         private void LoadMessageTextBox_LayoutUpdated(object sender, EventArgs e)
         {
-            if (this.LoadMessageTextBox.Visibility == Visibility.Visible)
+            if (this.loadMessageTB.Visibility == Visibility.Visible)
             {
                 // Commencer ici le chargement des données
                 this._controller.CheckFolderValidity();
-                this.LoadMessageTextBox.Visibility = Visibility.Hidden;
+                this.loadMessageTB.Visibility = Visibility.Hidden;
                 Debug.WriteLine("Fin de la recherche des données.");
             }
         }
@@ -93,7 +86,7 @@ namespace EcoleData
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             Debug.WriteLine("La fenêtre a fini de charger. Recherche des données...");
-            this.LoadMessageTextBox.Visibility = Visibility.Visible;
+            this.loadMessageTB.Visibility = Visibility.Visible;
         }
         private void SchoolsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -101,7 +94,7 @@ namespace EcoleData
             {
                 ShowUIElements();
                 string selectedSchoolName = ((ComboBox)sender).SelectedItem.ToString();
-                this.SchoolTitle.Text = "École de " + selectedSchoolName;
+                this.schoolTitle.Text = "École de " + selectedSchoolName;
 
                 this._controller.UpdateFilters(selectedSchoolName);
             }
@@ -118,28 +111,28 @@ namespace EcoleData
         public void ClearAllUIElements()
         {
             // Supprimer tous les polygones
-            this.LogoPlace.Children.Clear();
+            this.logoPlace.Children.Clear();
             // Supprimer tous les checkboxes étage
-            this.FloorsGrid.Children.Clear();
+            this.floorsGrid.Children.Clear();
             // Décocher toutes les checkboxes
-            this.SalleSensorCB.IsChecked = false;
-            this.CouloirSensorCB.IsChecked = false;
-            this.TemperatureCB.IsChecked = false;
-            this.DewPointCB.IsChecked = false;
-            this.HumidityCB.IsChecked = false;
-            this.SchoolTitle.Text = "";
-            this.SchoolCaptorsNb.Text = "";
+            this.salleSensorCB.IsChecked = false;
+            this.couloirSensorCB.IsChecked = false;
+            this.temperatureCB.IsChecked = false;
+            this.dewPointCB.IsChecked = false;
+            this.humidityCB.IsChecked = false;
+            this.schoolTitle.Text = "";
+            this.schoolCaptorsNb.Text = "";
             // Désafficher le graphique. 
-            this.GraphPlace.Visibility = Visibility.Hidden;
+            this.graphPlace.Visibility = Visibility.Hidden;
             // Vider le combobox
-            this.SchoolsComboBox.Items.Clear();
+            this.schoolsComboBox.Items.Clear();
             // Afficher le chargement des données
-            this.LoadMessageTextBox.Visibility = Visibility.Visible;
+            this.loadMessageTB.Visibility = Visibility.Visible;
         }
 
         // Affiche le message indiquant qu'il n'y a aucune donnée si le PlotView venait à être invisible
         private void PlotView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
-            this.NoDataLabel.Visibility = this.PlotView.Visibility != Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
+            this.noDataMsg.Visibility = this.PlotView.Visibility != Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
 
         private void ApplyFiltersBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -153,7 +146,7 @@ namespace EcoleData
 
         public void PrintFloorLogo(int floorsNb)
         {
-            this.LogoPlace.Children.Clear();
+            this.logoPlace.Children.Clear();
             this._allRectanglePolygons.Clear();
 
             int scaler = 7;
@@ -205,7 +198,7 @@ namespace EcoleData
                 StrokeThickness = 1,
                 Points = new PointCollection(upFacePoints),
             };
-            this.LogoPlace.Children.Add(upFace);
+            this.logoPlace.Children.Add(upFace);
 
             // BOUCLE
             for (int i = floorsNb - 1; i >= 0; i--)
@@ -236,8 +229,8 @@ namespace EcoleData
                     return p;
                 }).ToList();
 
-                this.LogoPlace.Children.Add(frontFace);
-                this.LogoPlace.Children.Add(sideFace);
+                this.logoPlace.Children.Add(frontFace);
+                this.logoPlace.Children.Add(sideFace);
                 this._allRectanglePolygons.Add(frontFace);
             }
             PrintNumbersOnFloorsLogo();
@@ -251,7 +244,7 @@ namespace EcoleData
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            this.LogoPlace.Children.Add(textBlocksStackPanel);
+            this.logoPlace.Children.Add(textBlocksStackPanel);
 
             foreach (Polygon frontFace in this._allRectanglePolygons)
             {

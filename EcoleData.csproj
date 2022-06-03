@@ -41,12 +41,12 @@
     <None Remove="Media\icons\icons8-stairs-up-16.png" />
     <None Remove="Media\icons\icons8-stocks-16.png" />
     <None Remove="Media\mainLogo.png" />
-    <None Remove="Media\Settings\settings.xml" />
+    <None Remove="Media\settings\settings.xml" />
     <None Remove="Media\tempLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Media\Settings\settings.xml" />
+    <Resource Include="Media\settings\settings.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,7 +81,6 @@
     <Resource Include="Media\icons\icons8-stairs-up-16.png" />
     <Resource Include="Media\icons\icons8-stocks-16.png" />
     <Resource Include="Media\mainLogo.png" />
-    <Resource Include="Media\tempLogo.png" />
   </ItemGroup>
 
 </Project>

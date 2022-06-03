@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EcoleData
 {
@@ -29,7 +24,7 @@ namespace EcoleData
 
         public MainModel(MainController mainController)
         {
-            this._defaultSettingsPath = this.GetAssemblyDirectory() + "\\Settings\\" + USER_SETTINGS_FILENAME;
+            this._defaultSettingsPath = this.GetAssemblyDirectory() + "\\settings\\" + USER_SETTINGS_FILENAME;
             this._controller = mainController;
             this.Settings = new Settings()
             {
@@ -49,7 +44,7 @@ namespace EcoleData
         public void CreateSettingsPath()
         {
             // Si le dossier Settings n'existe pas, alors en créer un
-            string settingsPath = GetAssemblyDirectory() + "\\Settings\\";
+            string settingsPath = GetAssemblyDirectory() + "\\settings\\";
             Directory.CreateDirectory(settingsPath);
 
             // Si le fichier Settings\settings.xml n'existe pas, alors en créer un

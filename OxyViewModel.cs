@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EcoleData.Tree;
 using OxyPlot;
-using OxyPlot.Series;
-using OxyPlot.Annotations;
-using OxyPlot.Utilities;
-using OxyPlot.Wpf;
 using OxyPlot.Axes;
-using System.Linq;
-using EcoleData.Tree;
 using OxyPlot.Legends;
+using OxyPlot.Series;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EcoleData
 {
