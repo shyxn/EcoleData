@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿/* 
+ * ETML
+ * Autrice : Morgane Lebre
+ * Date : du 13 mai au 8 juin 2022
+ */
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EcoleData.Tree
@@ -12,8 +18,9 @@ namespace EcoleData.Tree
         /// Contient toutes les écoles existantes
         /// </summary>
         public Dictionary<string, School> Schools { get; set; }
+
         /// <summary>
-        /// (CTOR) Initialise le dictionnaire dans Schools et relaie la création de l'arborescence à un niveau plus bas.
+        /// (ctor) Initialise le dictionnaire dans Schools et relaie la création de l'arborescence à un niveau plus bas.
         /// </summary>
         /// <param name="schoolPath">Le chemin du dossier de toutes les écoles.</param>
         public DataSchool(string foldersPath)

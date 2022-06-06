@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿/* 
+ * ETML
+ * Autrice : Morgane Lebre
+ * Date : du 13 mai au 8 juin 2022
+ */
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EcoleData.Tree
@@ -24,7 +30,10 @@ namespace EcoleData.Tree
                 name => name, // Clés : Noms des étages
                 name => new Floor(schoolPath + "\\" + name)); // Valeurs : Objets de type Floor
         }
-
+        /// <summary>
+        /// Pour l'afficher dans les filtres, en dessous du nom de l'école.
+        /// </summary>
+        /// <returns>Le nombre recherché</returns>
         public int GetNbOfSensors()
         {
             int number = 0;

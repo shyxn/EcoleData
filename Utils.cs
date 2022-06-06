@@ -1,4 +1,10 @@
-﻿using OxyPlot;
+﻿/* 
+ * ETML
+ * Autrice : Morgane Lebre
+ * Date : du 13 mai au 8 juin 2022
+ */
+
+using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,15 +13,36 @@ using System.Windows.Media;
 
 namespace EcoleData
 {
+    /// <summary>
+    /// Classe statique contenant des méthodes relatives à la récupération des noms de fichiers ou de dossiers (pour la création de l’arborescence des données) 
+    /// et à la gestion des couleurs des étages de l’application (pour le logo et les lignes des graphes).
+    /// </summary>
     public static class Utils
     {
-        public static string[] GetFoldersNames(string foldersPath) => 
-            Directory.GetDirectories(foldersPath, "*", SearchOption.TopDirectoryOnly)
-            .Select(path => path = path.Substring(foldersPath.Length + 1)).ToArray();
+        /// <summary>
+        /// Obtient tous les noms des dossiers directement dans un chemin donné (n'obtient pas les noms des sous-dossiers).
+        /// </summary>
+        /// <param name="folderPath">Le dossier dans lequel obtenir les noms.</param>
+        /// <returns>Un tableau de strings contenant tous les chemins.</returns>
+        public static string[] GetFoldersNames(string folderPath) => 
+            Directory.GetDirectories(folderPath, "*", SearchOption.TopDirectoryOnly)
+            .Select(path => path = path.Substring(folderPath.Length + 1)).ToArray();
+
+        /// <summary>
+        /// Obtient tous les noms des fichiers directement dans un chemin donné (n'obtient pas les noms dans les sous-dossiers).
+        /// </summary>
+        /// <param name="foldersPath">Le dossier dans lequel obtenir les noms.</param>
+        /// <returns>Un tableau de strings contenant tous les chemins.</returns>
         public static string[] GetFilesNames(string foldersPath) =>
             Directory.GetFiles(foldersPath, "*.csv", SearchOption.TopDirectoryOnly)
             .Select(path => path = path.Substring(foldersPath.Length + 1)).ToArray();
 
+        /// <summary>
+        /// Obtenir la couleur correspondante en fonction de l'étage et de la nuance de couleur renseignée en paramètre. À utiliser pour les graphiques.
+        /// </summary>
+        /// <param name="floorNb">L'étage associé à la couleur</param>
+        /// <param name="value">Filtre indiquant la nuance ("Température" -> foncée, "Humidité" -> normale, "Point de rosée" -> clair)</param>
+        /// <returns>Une couleur de type OxyColor.</returns>
         public static OxyColor GetSerieColor(int floorNb, string value)
         {
             ColorFamily floorFamily = GetColorFamily(floorNb);
@@ -27,11 +54,25 @@ namespace EcoleData
             });
         }
 
+        /// <summary>
+        /// Obtient la couleur sous forme de Brush. À utiliser pour les Polygon pour le logo.
+        /// </summary>
+        /// <param name="floorNb">L'étage associé à la couleur</param>
+        /// <param name="familyProperty">Propriété de la classe ColorFamily indiquant la nuance de couleur (DarkColor, NormalColor ou LightColor)</param>
+        /// <returns>Brush à utiliser pour la génération du logo.</returns>
         public static Brush GetFaceColor(int floorNb, Func<ColorFamily, string> familyProperty) => (Brush)new BrushConverter().ConvertFromString(familyProperty(GetColorFamily(floorNb)));
-        
+
+        /// <summary>
+        /// Obtenir la ColorFamily (le trio de couleurs) associé à l'étage renseigné en paramètre.
+        /// </summary>
+        /// <param name="floorNb">L'étage associé au trio de couleur.</param>
+        /// <returns>Un trio de couleur (objet ColorFamily)</returns>
         private static ColorFamily GetColorFamily(int floorNb) => ColorFamilies.Where(family => family.FloorNumber == floorNb).First();
             
-        public static List<ColorFamily> ColorFamilies = new()
+        /// <summary>
+        /// Annuaire d'objets ColorFamily pour 10 étages. Chaque famille de couleurs est associé à un étage.
+        /// </summary>
+        private static List<ColorFamily> ColorFamilies { get; set; } = new()
         {
             new ColorFamily()
             {

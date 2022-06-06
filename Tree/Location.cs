@@ -1,6 +1,11 @@
-﻿using System;
+﻿/* 
+ * ETML
+ * Autrice : Morgane Lebre
+ * Date : du 13 mai au 8 juin 2022
+ */
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,7 +13,7 @@ using System.Text;
 namespace EcoleData.Tree
 {
     /// <summary>
-    /// Représente un emplacement.
+    /// Représente un emplacement dans un étage (salle ou couloir).
     /// </summary>
     public class Location
     {
@@ -16,17 +21,17 @@ namespace EcoleData.Tree
         /// Chemin du fichier CSV.
         /// </summary>
         public string CSVFilePath { get; set; }
+
         /// <summary>
         /// Liste d'objets Records contenant toutes les mesures individuelles de l'emplacement.
         /// </summary>
         public List<Record> Records { get; set; }
         
         /// <summary>
-        /// La création de l'arborescence s'arrête ici.
+        /// La création de l'arborescence s'arrête ici. Pas d'instructions à préciser dans le ctor.
         /// </summary>
-        public Location()
-        {
-        }
+        public Location() { }
+
         /// <summary>
         /// Reconstitue les données CSV en objets Record à partir du chemin contenu dans la propriété Location.FilePath
         /// </summary>
@@ -34,11 +39,10 @@ namespace EcoleData.Tree
         {
             if (String.IsNullOrEmpty(this.CSVFilePath)){ return; }
 
-            // Rappel: il faut omettre les 5 premières lignes(0 - 4) qui ne contiennent pas de données
+            // Il faut omettre les 5 premières lignes (0 - 4) qui ne contiennent pas de données
             List<string> lines = File.ReadAllLines(this.CSVFilePath, Encoding.Latin1).Skip(5).ToList();
 
-            // lines.Select allows me to project each line as a Person. 
-            // This will give me an IEnumerable<Person> back.
+            // Création de tous les enregistrements sous forme d'objets Record.
             Records = lines.Select(line =>
             {
                 string[] data = line.Split(',');

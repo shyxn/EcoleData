@@ -1,5 +1,8 @@
-﻿
-// TODO : En-tête
+﻿/* 
+ * ETML
+ * Autrice : Morgane Lebre
+ * Date : du 13 mai au 8 juin 2022
+ */
 
 using EcoleData.Tree;
 using OxyPlot;
@@ -13,6 +16,9 @@ using System.Windows.Controls;
 
 namespace EcoleData
 {
+    /// <summary>
+    /// Contrôleur MVC principal de l'application. Contient la plupart des méthodes centrales à la coordination du programme et fait le lien entre les modèles et la vue.
+    /// </summary>
     public class MainController
     {
         private MainWindow _mainWindow;
@@ -20,10 +26,16 @@ namespace EcoleData
         private OxyViewModel _mainViewModel;
         private Filters _filters;
 
-        private string _softwareTitle;
         public string SoftwareTitle { get; set; }
+        /// <summary>
+        /// Contenant DataSchool de toutes les écoles. Niveau le plus haut de l'arborescence des données.
+        /// </summary>
         public DataSchool DataSchool { get; set; }
 
+        /// <summary>
+        /// (ctor) Initialisation des propriétés et établissement du schéma MVC.
+        /// </summary>
+        /// <param name="vue">Vue principale à relier au contrôleur</param>
         public MainController(MainWindow vue)
         {
             this._mainWindow = vue;
@@ -36,6 +48,10 @@ namespace EcoleData
             this._mainViewModel.PlotModel.DefaultFont = "Roboto";
         }
 
+        /// <summary>
+        /// Renseigne au modèle principal le chemin du dossier des données
+        /// </summary>
+        /// <param name="folderPath">Le chemin du dossier en question.</param>
         public void SetNewFolderPath(string folderPath) => this._mainModel.SetNewFolderPath(folderPath);
 
         /// <summary>
@@ -56,11 +72,15 @@ namespace EcoleData
             this._mainWindow.folderNameTB.Text = folderPath;
             LoadTree();
         }
+        /// <summary>
+        /// Chargement de l'arborescence des données
+        /// </summary>
         public void LoadTree() // Le chemin du dossier sera toujours valide ici.
         {
             Debug.WriteLine("[LoadTree()] Chargement de l'arborescence des données...");
-            //LIRE TOUS LES CSV( ~700k objets instanciés)
             
+            // Lecture de tous les fichiers CSV (/!\ ~700k objets à instancier)
+            // La vérification de la bonne conversion CSV -> Record se fait ici.
             try
             {
                 DataSchool = new DataSchool(this._mainModel.Settings.FolderPath);
@@ -75,7 +95,6 @@ namespace EcoleData
                 return;
             }
             
-            // Attention, ne vérifie pas la validité des fichiers CSV...
             if (!CheckTreeValidity())
             {
                 this._mainWindow.folderNameTB.Text = "Dossier inexistant ou invalide.";
@@ -93,15 +112,19 @@ namespace EcoleData
                     .TrueForAll(floor => floor.Locations.Count > 0));
         }
 
+        /// <summary>
+        /// Actualisation de la liste déroulante suite à la validation du dossier choisi et à la vérification de toute l'arborescence.
+        /// </summary>
         private void UpdateComboBox()
         {
             this._mainWindow.schoolsComboBox.Items.Clear();
+            // Parcourir toutes les écoles
             DataSchool.Schools.Keys.ToList().ForEach(schoolName => this._mainWindow.schoolsComboBox.Items.Add(schoolName));
             this._mainWindow.schoolsComboBox.IsEnabled = true;
         }
 
         /// <summary>
-        /// Au moment où une école est choisie.
+        /// Au moment où une école est sélectionnée. Actualise les informations dans l'objet Filters dédié.
         /// </summary>
         public void UpdateFilters(string schoolName)
         {
@@ -152,7 +175,7 @@ namespace EcoleData
         }
 
         /// <summary>
-        /// Ne change pas l'école sélectionnée.
+        /// Remet à défaut les filtres pour l'école sélectionnée. (Ne change pas l'école sélectionnée.)
         /// </summary>
         public void SetDefaultFilters()
         {
@@ -177,6 +200,9 @@ namespace EcoleData
             this._mainViewModel.UpdateDateBounds(this._mainModel.MinDate, this._mainModel.MaxDate);
             CheckAndApplyFilters();
         }
+        /// <summary>
+        /// Application des filtres si la vérification des filtres est fructueuse.
+        /// </summary>
         public void CheckAndApplyFilters()
         {
             // Configuration de _filters
@@ -187,23 +213,27 @@ namespace EcoleData
                 ShowGraph();
             }
         }
+        /// <summary>
+        /// Vérification des filtres - Affiche des messages d'erreur pour l'utilisateur si besoin
+        /// </summary>
+        /// <returns>true si tous les filtres sont corrects, sinon false.</returns>
         private bool AreFiltersCorrect()
         {
             this._mainWindow.HideAllFiltersMessages();
             // Les conditions sont écrites de manière "Vrai si rien n'est coché"
-            // Si aucun étage est coché
+            // Si aucun étage n'est coché
             if (this._filters.Floors.TrueForAll(checkbox => !(bool)checkbox.IsChecked))
             {
                 this._mainWindow.floorsFiltersErrorMsg.Visibility = Visibility.Visible;
             }
 
-            // Si aucun emplacement est coché
+            // Si aucun emplacement n'est coché
             if (this._filters.Locations.Values.ToList().TrueForAll(isChecked => !isChecked))
             {
                 this._mainWindow.locationsFilterErrorMsg.Visibility = Visibility.Visible;
             }
 
-            // Si aucune valeur est cochée
+            // Si aucune valeur n'est cochée
             if (this._filters.Values.Values.ToList().TrueForAll(isChecked => !isChecked))
             {
                 this._mainWindow.valuesFiltersErrorMsg.Visibility = Visibility.Visible;
@@ -259,7 +289,10 @@ namespace EcoleData
             this._filters.StartDate = (DateTime)this._mainWindow.startDatePicker.SelectedDate;
             this._filters.EndDate = (DateTime)this._mainWindow.endDatePicker.SelectedDate;
         }
-      
+        
+        /// <summary>
+        /// Définit toutes les informations puis actualise le graphique (PlotView et PlotModel).
+        /// </summary>
         public void ShowGraph()
         {
             this._mainViewModel.ClearAllSeries();
@@ -282,10 +315,12 @@ namespace EcoleData
             this._mainViewModel.UpdateDateBounds(this._filters.StartDate, this._filters.EndDate);
 
             // Actualise en même temps le graphique et les sets de données (performance?)
-            // Todo : https://blog.bartdemeyer.be/2013/03/creating-graphs-in-wpf-using-oxyplot/
+            // https://blog.bartdemeyer.be/2013/03/creating-graphs-in-wpf-using-oxyplot/
             this._mainWindow.PlotView.InvalidatePlot(true);
                 
             this._mainWindow.PlotView.Visibility = Visibility.Visible;
+
+            // Si le graphe n'a pas de série à afficher
             if (this._mainViewModel.PlotModel.Series.Count == 0)
             {
                 this._mainWindow.noDataMsg.Visibility = Visibility.Visible;
@@ -294,7 +329,7 @@ namespace EcoleData
         }
 
         /// <summary>
-        /// Va essayer de créer une série par emplacement (si les filtres le demandent)
+        /// Crée une série par emplacement (si les filtres le demandent)
         /// </summary>
         /// <param name="floorPair">Étage contenant tous les emplacements à traiter</param>
         public void CreateSeriesForEachLocation(KeyValuePair<string, Floor> floorPair)

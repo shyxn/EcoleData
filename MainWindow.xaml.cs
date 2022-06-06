@@ -1,4 +1,10 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿/* 
+ * ETML
+ * Autrice : Morgane Lebre
+ * Date : du 13 mai au 8 juin 2022
+ */
+
+using Microsoft.WindowsAPICodePack.Dialogs;
 using OxyPlot.Wpf;
 using System;
 using System.Collections.Generic;
@@ -12,15 +18,33 @@ using System.Windows.Shapes;
 namespace EcoleData
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Contient les opérations logiques de MainWindows.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Contrôleur du schéma MVC.
+        /// </summary>
         private MainController _controller;
+        /// <summary>
+        /// Liste d'éléments UI dont la visibilité est à gérer en fonction de la validité du dossier choisi
+        /// </summary>
         private List<UIElement> _elementsToHideIfNoFolder;
-        public List<TextBlock> AllFiltersErrorMessages { get; set; }
-        public PlotView PlotView { get; set; }
+        /// <summary>
+        /// Liste de tous les objets Polygon servant de base à chaque étage dans le logo. (faces antérieures de la tour)
+        /// </summary>
         private List<Polygon> _allRectanglePolygons { get; set; }
+        /// <summary>
+        /// Liste de tous les TextBlock de messages d'erreurs pour l'utilisateur dans les filtres.
+        /// </summary>
+        public List<TextBlock> AllFiltersErrorMessages { get; set; }
+        /// <summary>
+        /// Composant visuel des graphiques (Oxyplot)
+        /// </summary>
+        public PlotView PlotView { get; set; }
+        /// <summary>
+        /// (ctor) Initialise les propriétés par défaut.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -48,6 +72,11 @@ namespace EcoleData
             HideUIElements();
         }
 
+        /// <summary>
+        /// Permet de déclencher le chargement des données cheu le contrôleur. Le message doit être visible à l'utilisateur.
+        /// </summary>
+        /// <param name="sender">Objet concerné par l'événement (ici le TextBlock du message)</param>
+        /// <param name="e">Informations sur l'événement déclenché</param>
         private void LoadMessageTextBox_LayoutUpdated(object sender, EventArgs e)
         {
             if (this.loadMessageTB.Visibility == Visibility.Visible)
@@ -59,6 +88,11 @@ namespace EcoleData
             }
         }
 
+        /// <summary>
+        /// Événement de sélection du dossier.
+        /// </summary>
+        /// <param name="sender">Button de sélection du dossier</param>
+        /// <param name="e">Informations sur l'événement déclenché</param>
         private void ChooseFolderBtn_Click(object sender, RoutedEventArgs e)
         {
             // https://stackoverflow.com/a/58569707
@@ -78,16 +112,27 @@ namespace EcoleData
 
             if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                // Afficher le chemin du dossier
+                // Afficher le chemin du dossier - ça déclenchera la suite grâce à LoadMessageTextBox_LayoutUpdated
                 this._controller.SetNewFolderPath(dlg.FileName);
                 ClearAllUIElements();
             }
         }
+        /// <summary>
+        /// Au commencement du programme - lorsque la fenêtre a fini de charger
+        /// </summary>
+        /// <param name="sender">L'élément Window en question.</param>
+        /// <param name="e">Informations sur l'événement déclenché</param>
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             Debug.WriteLine("La fenêtre a fini de charger. Recherche des données...");
             this.loadMessageTB.Visibility = Visibility.Visible;
         }
+        /// <summary>
+        /// Lorsqu'un élément est choisi dans la liste déroulante des écoles. 
+        /// Du côté de la vue, des informations doivent être affichées et du côté du contrôleur, les filtres doivent être actualisés.
+        /// </summary>
+        /// <param name="sender">L'élément de liste déroulante (ComboBox) sur lequel l'événement s'est déclenché</param>
+        /// <param name="e">Informations sur l'événement déclenché</param>
         private void SchoolsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (((ComboBox)sender).Items.Count > 0)
@@ -99,9 +144,17 @@ namespace EcoleData
                 this._controller.UpdateFilters(selectedSchoolName);
             }
         }
-
+        /// <summary>
+        /// Cacher les éléments à faire disparaître (lorsqu'aucun dossier n'est sélectionné). Les éléments ne sont pas Collapsed.
+        /// </summary>
         public void HideUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Hidden);
+        /// <summary>
+        /// Afficher les éléments lorsqu'un dossier est sélectionné.
+        /// </summary>
         public void ShowUIElements() => this._elementsToHideIfNoFolder.ForEach(element => element.Visibility = Visibility.Visible);
+        /// <summary>
+        /// Collapse tous les messages d'erreurs des filtres.
+        /// </summary>
         public void HideAllFiltersMessages() => this.AllFiltersErrorMessages.ForEach(message => message.Visibility = Visibility.Collapsed);
 
         /// <summary>
@@ -112,8 +165,10 @@ namespace EcoleData
         {
             // Supprimer tous les polygones
             this.logoPlace.Children.Clear();
+
             // Supprimer tous les checkboxes étage
             this.floorsGrid.Children.Clear();
+
             // Décocher toutes les checkboxes
             this.salleSensorCB.IsChecked = false;
             this.couloirSensorCB.IsChecked = false;
@@ -122,28 +177,50 @@ namespace EcoleData
             this.humidityCB.IsChecked = false;
             this.schoolTitle.Text = "";
             this.schoolCaptorsNb.Text = "";
+
             // Désafficher le graphique. 
             this.graphPlace.Visibility = Visibility.Hidden;
+
             // Vider le combobox
             this.schoolsComboBox.Items.Clear();
+
             // Afficher le chargement des données
             this.loadMessageTB.Visibility = Visibility.Visible;
         }
 
-        // Affiche le message indiquant qu'il n'y a aucune donnée si le PlotView venait à être invisible
+        /// <summary>
+        /// Affiche le message indiquant qu'il n'y a aucune donnée si le PlotView venait à être invisible.
+        /// </summary>
+        /// <param name="sender">Le PlotView en question</param>
+        /// <param name="e">Informations sur l'événement déclenché.</param>
         private void PlotView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
             this.noDataMsg.Visibility = this.PlotView.Visibility != Visibility.Visible ? Visibility.Visible : Visibility.Hidden;
 
+        /// <summary>
+        /// Se déclenche lorsque l'utilisateur veut valider ses filtres. Délègue cette tâche au contrôleur.
+        /// </summary>
+        /// <param name="sender">Button applyFiltersBtn</param>
+        /// <param name="e">Informations sur l'événement déclenché</param>
         private void ApplyFiltersBtn_Click(object sender, RoutedEventArgs e)
         {
             this._controller.CheckAndApplyFilters();
         }
 
+        /// <summary>
+        /// Se déclenche lorsque l'utilisateur veut réinitialiser les filtres pendant la sélection. 
+        /// Les filtres sont donc réinitialisés par défaut par le contrôleur.
+        /// </summary>
+        /// <param name="sender">Button resetFiltersBtn</param>
+        /// <param name="e">Informations sur l'événement déclenché</param>
         private void ResetFiltersBtn_Click(object sender, RoutedEventArgs e)
         {
             this._controller.SetDefaultFilters();
         }
 
+        /// <summary>
+        /// Affichage du logo dynamique des étages dans logoPlace.
+        /// </summary>
+        /// <param name="floorsNb">Nombre d'étages à afficher</param>
         public void PrintFloorLogo(int floorsNb)
         {
             this.logoPlace.Children.Clear();
@@ -152,7 +229,7 @@ namespace EcoleData
             int scaler = 7;
             int nextFloorYStep = 3 * scaler;
 
-            // { y ; x }
+            // Coordonnées { y ; x }
             Point logoAnchor = new Point(0, 0);
             List<Point> upFacePoints = new()
             {
@@ -173,7 +250,7 @@ namespace EcoleData
             }
             ).ToList();
 
-            // Dessiner la face du devant - contient le chiffre
+            // Dessiner la face du devant (contient le chiffre)
             List<Point> frontFacePoints = new()
             {
                 upFacePoints[1],
@@ -200,7 +277,7 @@ namespace EcoleData
             };
             this.logoPlace.Children.Add(upFace);
 
-            // BOUCLE
+            // Itération pour chaque étage
             for (int i = floorsNb - 1; i >= 0; i--)
             {
                 Polygon frontFace = new Polygon()
@@ -217,7 +294,7 @@ namespace EcoleData
                     StrokeThickness = 1,
                     Points = new PointCollection(sideFacePoints),
                 };
-                
+                // Décalage des points pour le prochain étage
                 frontFacePoints = frontFacePoints.Select<Point, Point>(p =>
                 {
                     p.Y += nextFloorYStep;
@@ -235,9 +312,14 @@ namespace EcoleData
             }
             PrintNumbersOnFloorsLogo();
         }
+        /// <summary>
+        /// Afficher le chiffre de l'étage pour chaque Polygon de face antérieure généré et stocké dans _allRectanglePolygons.
+        /// </summary>
         public void PrintNumbersOnFloorsLogo()
         {
             int floorNb = this._allRectanglePolygons.Count;
+
+            // Création du contenant (StackPanel) de tous les futurs TextBlocks.
             StackPanel textBlocksStackPanel = new StackPanel()
             {
                 Orientation = Orientation.Vertical,
@@ -246,14 +328,15 @@ namespace EcoleData
             };
             this.logoPlace.Children.Add(textBlocksStackPanel);
 
+            // Sur la base de chaque face antérieure 
             foreach (Polygon frontFace in this._allRectanglePolygons)
-            {
+            { 
                 if (floorNb == this._allRectanglePolygons.Count)
                 {
                     textBlocksStackPanel.Margin = new Thickness(0, frontFace.Points[0].Y, 0, 0);
                 }
                 floorNb--;
-                // Ajouter le chiffre
+
                 TextBlock tb = new TextBlock();
                 tb.Margin = new Thickness(0);
                 tb.Padding = new Thickness(0);
@@ -264,6 +347,8 @@ namespace EcoleData
                 tb.Foreground = Brushes.White;
                 tb.FontSize = 15;
                 textBlocksStackPanel.Children.Add(tb);
+
+                // Être sûr qu'il soit bien visible par dessus les polygones
                 Grid.SetZIndex(tb, 10);
             }
         }
