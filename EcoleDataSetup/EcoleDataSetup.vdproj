@@ -77,7 +77,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\EcoleDataSetup.msi"
+        "OutputFilename" = "8:Release\\EcoleData_setup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -213,7 +213,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_6936CA50C0714F2FB90FB52291A02C46"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFiles64Folder][Manufacturer]\\[ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -260,9 +260,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:EcoleDataSetup"
+        "ProductName" = "8:EcoleData"
         "ProductCode" = "8:{7980C15A-9F62-478A-924A-1ABEC5FEC92C}"
-        "PackageCode" = "8:{42C245AE-CC80-4F4C-B9D5-2C11830271F5}"
+        "PackageCode" = "8:{DADF484E-F1BC-45AE-888E-66A4926668B8}"
         "UpgradeCode" = "8:{F8E04769-B126-4333-9418-99AB9A91EEB5}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -270,12 +270,12 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Default Company Name"
+        "Manufacturer" = "8:ETML"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:EcoleDataSetup"
+        "Title" = "8:EcoleData"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Default Company Name"
+        "ARPCONTACT" = "8:Morgane Lebre"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -283,7 +283,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"
@@ -393,7 +393,7 @@
             "Target" = "8:_181AF9ACFB2442388841E257CD0C9C6D"
             "Folder" = "8:_E9D3BEC03F84480B81E6E4AE5809CEDA"
             "WorkingFolder" = "8:_6936CA50C0714F2FB90FB52291A02C46"
-            "Icon" = "8:"
+            "Icon" = "8:_A266BF3022014FD495C4E71D13CB336E"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_AEC66136F36D4F6F989F5E236943ABE3"
@@ -407,7 +407,7 @@
             "Target" = "8:_181AF9ACFB2442388841E257CD0C9C6D"
             "Folder" = "8:_1102BBE368474EDEA6F17829117D5ECC"
             "WorkingFolder" = "8:_6936CA50C0714F2FB90FB52291A02C46"
-            "Icon" = "8:"
+            "Icon" = "8:_A266BF3022014FD495C4E71D13CB336E"
             "Feature" = "8:"
             }
         }
@@ -811,7 +811,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_181AF9ACFB2442388841E257CD0C9C6D"
             {
-            "SourcePath" = "8:..\\obj\\Debug\\net5.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\obj\\Release\\net5.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6936CA50C0714F2FB90FB52291A02C46"
